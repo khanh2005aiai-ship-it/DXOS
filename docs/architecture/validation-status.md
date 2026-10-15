@@ -45,3 +45,9 @@ Frontend khai báo trực tiếp @types/node 22.20.1 và lockfile tương ứng.
 Trạng thái CI remote của bản sửa cần xem trực tiếp tại Actions theo commit; không suy diễn từ Docker/local PASS.
 
 Run 38774652978: verify PASS; toàn bộ image build đạt, 8 runtime scan đạt zero HIGH/CRITICAL nhưng Keycloak NOT_EXECUTED vì script tìm tag trong khi workflow pull bằng digest. Script dùng đúng immutable reference của workflow, giữ fail-closed cho image không tồn tại và thêm thông báo service bị thiếu; không bỏ qua Keycloak hay hạ ngưỡng quét.
+
+## Kiểm tra hướng dẫn người chấm — 16/10/2026
+
+Commit d12ea27 đạt cả verify và scan trên GitHub, run 38776056685. Kiểm tra lại bản này với database MySQL tạm mới và backend/.env tạm: các lệnh npm db:generate, db:validate, db:migrate:deploy, db:migrate:status, seed:demo-admin và seed:demo nạp cấu hình thành công; schema không drift. Frontend/proxy login/profile và sáu API departments/employees/tasks/files/notifications/roles trả 200; foreign organization 403, logout 204, session cũ 401. Database và env tạm đã được dọn; không dùng/reset dữ liệu dx_os của máy tác giả.
+
+Xem [hướng dẫn người chấm](teacher-demo-quickstart.md). Kiểm thử dùng cổng tạm để không ảnh hưởng các dịch vụ đang chạy; cấu hình được điều chỉnh tương ứng. Chưa kiểm tra trực tiếp máy giảng viên và chưa có website demo công khai; cần cài môi trường, cấu hình MySQL và tự đặt mật khẩu demo theo hướng dẫn.

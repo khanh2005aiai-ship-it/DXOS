@@ -27,6 +27,8 @@ Node.js 22.21.1 trở lên · NestJS · React 18/Vite/TypeScript · MySQL Commun
 
 ## Chạy từ bản clone mới
 
+**Dành cho giảng viên/người chấm:** làm theo [hướng dẫn mở và test demo từ máy mới](docs/architecture/teacher-demo-quickstart.md), gồm cấu hình, tạo tài khoản và xử lý lỗi thường gặp. Repository này là mã nguồn; chưa có website demo công khai.
+
 Cần Node/npm và MySQL đang chạy. Docker chỉ cần cho security stack đầy đủ.
 
 ```powershell
