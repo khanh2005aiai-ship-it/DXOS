@@ -43,3 +43,5 @@ Frontend khai báo trực tiếp @types/node 22.20.1 và lockfile tương ứng.
 Đã kiểm tra tarball nguyên bản và repository upstream tại tag v1.5.1 của gói Linux: package.json khai báo MIT, README xác định platform binary; không có standalone LICENSE. Review chỉ áp dụng chính xác phiên bản 1.5.1, lưu nguyên metadata/README và canonical terms theo cơ chế hiện có; không dựng notice hay tự phê duyệt phiên bản khác. Cài root/frontend trong Linux container sạch và chạy fetch/review/strict đạt 941/941 installed entries, 13 reviewed declaration entries, không thiếu bằng chứng. Đây là bằng chứng và giới hạn pháp lý được công khai, không phải chứng nhận pháp lý.
 
 Trạng thái CI remote của bản sửa cần xem trực tiếp tại Actions theo commit; không suy diễn từ Docker/local PASS.
+
+Run 38774652978: verify PASS; toàn bộ image build đạt, 8 runtime scan đạt zero HIGH/CRITICAL nhưng Keycloak NOT_EXECUTED vì script tìm tag trong khi workflow pull bằng digest. Script dùng đúng immutable reference của workflow, giữ fail-closed cho image không tồn tại và thêm thông báo service bị thiếu; không bỏ qua Keycloak hay hạ ngưỡng quét.
