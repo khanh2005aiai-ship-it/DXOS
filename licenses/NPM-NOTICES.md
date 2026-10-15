@@ -65,7 +65,7 @@ Not installed means absent on this platform; collect notices again for the actua
 | backend | @esbuild/linux-ppc64@0.28.2 | MIT | development | not installed on this platform |
 | backend | @esbuild/linux-riscv64@0.28.2 | MIT | development | not installed on this platform |
 | backend | @esbuild/linux-s390x@0.28.2 | MIT | development | not installed on this platform |
-| backend | @esbuild/linux-x64@0.28.2 | MIT | development | not installed on this platform |
+| backend | @esbuild/linux-x64@0.28.2 | MIT | development | [text b40ec5ba](texts/b40ec5baec7bb34fa5b1c09521fa3cd52d5fad7adafed74932a2010d3612a681.txt) |
 | backend | @esbuild/netbsd-arm64@0.28.2 | MIT | development | not installed on this platform |
 | backend | @esbuild/netbsd-x64@0.28.2 | MIT | development | not installed on this platform |
 | backend | @esbuild/openbsd-arm64@0.28.2 | MIT | development | not installed on this platform |
@@ -74,7 +74,7 @@ Not installed means absent on this platform; collect notices again for the actua
 | backend | @esbuild/sunos-x64@0.28.2 | MIT | development | not installed on this platform |
 | backend | @esbuild/win32-arm64@0.28.2 | MIT | development | not installed on this platform |
 | backend | @esbuild/win32-ia32@0.28.2 | MIT | development | not installed on this platform |
-| backend | @esbuild/win32-x64@0.28.2 | MIT | development | [text b40ec5ba](texts/b40ec5baec7bb34fa5b1c09521fa3cd52d5fad7adafed74932a2010d3612a681.txt) |
+| backend | @esbuild/win32-x64@0.28.2 | MIT | development | not installed on this platform |
 | backend | @eslint-community/eslint-utils@4.10.1 | MIT | development | [text fcf6eabf](texts/fcf6eabf68ca96988a6b506b4fdc6cc32535d80eb2e11c79724af5ac6f50262b.txt) |
 | backend | eslint-visitor-keys@3.4.3 | Apache-2.0 | development | [text d8bf34ff](texts/d8bf34ff6d190640a01e7704ad78253fc181bc128949d71273fbbaa12f33c0b4.txt) |
 | backend | @eslint-community/regexpp@4.12.2 | MIT | development | [text fcf6eabf](texts/fcf6eabf68ca96988a6b506b4fdc6cc32535d80eb2e11c79724af5ac6f50262b.txt) |
@@ -150,10 +150,10 @@ Not installed means absent on this platform; collect notices again for the actua
 | backend | @parcel/watcher-linux-arm-musl@2.6.0 | MIT | development | not installed on this platform |
 | backend | @parcel/watcher-linux-arm64-glibc@2.6.0 | MIT | development | not installed on this platform |
 | backend | @parcel/watcher-linux-arm64-musl@2.6.0 | MIT | development | not installed on this platform |
-| backend | @parcel/watcher-linux-x64-glibc@2.6.0 | MIT | development | not installed on this platform |
-| backend | @parcel/watcher-linux-x64-musl@2.6.0 | MIT | development | not installed on this platform |
+| backend | @parcel/watcher-linux-x64-glibc@2.6.0 | MIT | development | [text 5cfba9d5](texts/5cfba9d5711264d45a2431a53c79f597cef12720cc7c764db2602daa92d0bd2a.txt) |
+| backend | @parcel/watcher-linux-x64-musl@2.6.0 | MIT | development | [text 5cfba9d5](texts/5cfba9d5711264d45a2431a53c79f597cef12720cc7c764db2602daa92d0bd2a.txt) |
 | backend | @parcel/watcher-win32-arm64@2.6.0 | MIT | development | not installed on this platform |
-| backend | @parcel/watcher-win32-x64@2.6.0 | MIT | development | [text 5cfba9d5](texts/5cfba9d5711264d45a2431a53c79f597cef12720cc7c764db2602daa92d0bd2a.txt) |
+| backend | @parcel/watcher-win32-x64@2.6.0 | MIT | development | not installed on this platform |
 | backend | @phc/format@1.0.0 | MIT | production | [text d46c1f48](texts/d46c1f48844edece7dc48e0ba4aa2ce8fa8ab78c7664b0310a9e7a98df262ba1.txt) |
 | backend | @pkgjs/parseargs@0.11.0 | MIT | development | [text c71d239d](texts/c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt) |
 | backend | @pkgr/core@0.3.6 | MIT | development | [text 82a22218](texts/82a222189ab9764f8ec1c052b9661f2c9f12db52387312acbf73b2be5b8b6c32.txt) |
@@ -226,13 +226,13 @@ Not installed means absent on this platform; collect notices again for the actua
 | backend | @unrs/resolver-binding-linux-riscv64-gnu@1.12.2 | MIT | development | not installed on this platform |
 | backend | @unrs/resolver-binding-linux-riscv64-musl@1.12.2 | MIT | development | not installed on this platform |
 | backend | @unrs/resolver-binding-linux-s390x-gnu@1.12.2 | MIT | development | not installed on this platform |
-| backend | @unrs/resolver-binding-linux-x64-gnu@1.12.2 | MIT | development | not installed on this platform |
-| backend | @unrs/resolver-binding-linux-x64-musl@1.12.2 | MIT | development | not installed on this platform |
+| backend | @unrs/resolver-binding-linux-x64-gnu@1.12.2 | MIT | development | [text a9e35996](texts/a9e35996693bd619302922c731fa2f620ad12d5f50b19a37c8a3e0e078c9bd2f.txt) |
+| backend | @unrs/resolver-binding-linux-x64-musl@1.12.2 | MIT | development | [text a9e35996](texts/a9e35996693bd619302922c731fa2f620ad12d5f50b19a37c8a3e0e078c9bd2f.txt) |
 | backend | @unrs/resolver-binding-openharmony-arm64@1.12.2 | MIT | development | not installed on this platform |
 | backend | @unrs/resolver-binding-wasm32-wasi@1.12.2 | MIT | development | not installed on this platform |
 | backend | @unrs/resolver-binding-win32-arm64-msvc@1.12.2 | MIT | development | not installed on this platform |
 | backend | @unrs/resolver-binding-win32-ia32-msvc@1.12.2 | MIT | development | not installed on this platform |
-| backend | @unrs/resolver-binding-win32-x64-msvc@1.12.2 | MIT | development | [text a9e35996](texts/a9e35996693bd619302922c731fa2f620ad12d5f50b19a37c8a3e0e078c9bd2f.txt) |
+| backend | @unrs/resolver-binding-win32-x64-msvc@1.12.2 | MIT | development | not installed on this platform |
 | backend | accepts@2.0.0 | MIT | production | [text 71f83c4c](texts/71f83c4c0621102a56d9853812777b85751bce7e9726f686f5b056c1f8a4b0e6.txt); [source notice cbe4a565](texts/cbe4a5653ae56690b2f96c019449ab1b49185eb750e4a55276dc3238b295f99c.txt) |
 | backend | acorn@8.18.0 | MIT | development | [text 76a876cf](texts/76a876cf886ff9be2a8b5e2e86514fed06223c8c9f0c1e9ee9606e93841e00b7.txt) |
 | backend | acorn-jsx@5.3.2 | MIT | development | [text cfa72b62](texts/cfa72b62b9ae173078823a3796b25c027a9071046a263beddf966df67018ce06.txt) |
@@ -556,7 +556,7 @@ Not installed means absent on this platform; collect notices again for the actua
 | backend | rc9@2.1.2 | MIT | production | [text 68822200](texts/688222000d499a064a7feb8fa0bb2a3dded5a182f90ef9de986bf7307d777a26.txt) |
 | backend | readdirp@4.1.2 | MIT | production | [text dffec71d](texts/dffec71d93f273d2af7b54c6c7e7e70b3289c632ec0d7253210ec21ac336d5ac.txt) |
 | backend | redis@5.12.1 | MIT | production | [text a57b250a](texts/a57b250a5bf03d7afe55b74063313f2adb7b00d546c0ab149a89398333fe3cc8.txt) |
-| backend | reflect-metadata@0.2.2 | Apache-2.0 | production | [text c5217b05](texts/c5217b0544ea9c91d010863582d6f6b35ec50e4146c34dee085ddcec5dd92def.txt); [source notice 087dc9ab](texts/087dc9ab76240279e999981a86be9fb1977d1ee0d167cd9a042f92943cf5904a.txt), [source notice 087dc9ab](texts/087dc9ab76240279e999981a86be9fb1977d1ee0d167cd9a042f92943cf5904a.txt), [source notice e58603e0](texts/e58603e0e9f124d5bc7d6b478522e62bf374557dbcad916845272bcd6734029c.txt), [source notice e58603e0](texts/e58603e0e9f124d5bc7d6b478522e62bf374557dbcad916845272bcd6734029c.txt), [source notice 087dc9ab](texts/087dc9ab76240279e999981a86be9fb1977d1ee0d167cd9a042f92943cf5904a.txt) |
+| backend | reflect-metadata@0.2.2 | Apache-2.0 | production | [text c5217b05](texts/c5217b0544ea9c91d010863582d6f6b35ec50e4146c34dee085ddcec5dd92def.txt); [source notice e58603e0](texts/e58603e0e9f124d5bc7d6b478522e62bf374557dbcad916845272bcd6734029c.txt), [source notice e58603e0](texts/e58603e0e9f124d5bc7d6b478522e62bf374557dbcad916845272bcd6734029c.txt), [source notice 087dc9ab](texts/087dc9ab76240279e999981a86be9fb1977d1ee0d167cd9a042f92943cf5904a.txt), [source notice 087dc9ab](texts/087dc9ab76240279e999981a86be9fb1977d1ee0d167cd9a042f92943cf5904a.txt), [source notice 087dc9ab](texts/087dc9ab76240279e999981a86be9fb1977d1ee0d167cd9a042f92943cf5904a.txt) |
 | backend | require-directory@2.1.1 | MIT | development | [text a92e52eb](texts/a92e52eb1fa7cd746e3827bf01d3a3589bbc8e1e51348b1da042aad165525ad1.txt) |
 | backend | resolve-cwd@3.0.0 | MIT | development | [text 48da2f39](texts/48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0.txt) |
 | backend | resolve-from@5.0.0 | MIT | development | [text 48da2f39](texts/48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0.txt) |
@@ -691,13 +691,13 @@ Not installed means absent on this platform; collect notices again for the actua
 | frontend | @esbuild/linux-ppc64@0.21.5 | MIT | development | not installed on this platform |
 | frontend | @esbuild/linux-riscv64@0.21.5 | MIT | development | not installed on this platform |
 | frontend | @esbuild/linux-s390x@0.21.5 | MIT | development | not installed on this platform |
-| frontend | @esbuild/linux-x64@0.21.5 | MIT | development | not installed on this platform |
+| frontend | @esbuild/linux-x64@0.21.5 | MIT | development | [text b40ec5ba](texts/b40ec5baec7bb34fa5b1c09521fa3cd52d5fad7adafed74932a2010d3612a681.txt) |
 | frontend | @esbuild/netbsd-x64@0.21.5 | MIT | development | not installed on this platform |
 | frontend | @esbuild/openbsd-x64@0.21.5 | MIT | development | not installed on this platform |
 | frontend | @esbuild/sunos-x64@0.21.5 | MIT | development | not installed on this platform |
 | frontend | @esbuild/win32-arm64@0.21.5 | MIT | development | not installed on this platform |
 | frontend | @esbuild/win32-ia32@0.21.5 | MIT | development | not installed on this platform |
-| frontend | @esbuild/win32-x64@0.21.5 | MIT | development | [text b40ec5ba](texts/b40ec5baec7bb34fa5b1c09521fa3cd52d5fad7adafed74932a2010d3612a681.txt) |
+| frontend | @esbuild/win32-x64@0.21.5 | MIT | development | not installed on this platform |
 | frontend | @eslint-community/eslint-utils@4.10.1 | MIT | development | [text fcf6eabf](texts/fcf6eabf68ca96988a6b506b4fdc6cc32535d80eb2e11c79724af5ac6f50262b.txt) |
 | frontend | eslint-visitor-keys@3.4.3 | Apache-2.0 | development | [text d8bf34ff](texts/d8bf34ff6d190640a01e7704ad78253fc181bc128949d71273fbbaa12f33c0b4.txt) |
 | frontend | @eslint-community/regexpp@4.12.2 | MIT | development | [text fcf6eabf](texts/fcf6eabf68ca96988a6b506b4fdc6cc32535d80eb2e11c79724af5ac6f50262b.txt) |
@@ -720,7 +720,7 @@ Not installed means absent on this platform; collect notices again for the actua
 | frontend | @jridgewell/resolve-uri@3.1.2 | MIT | development | [text b8778b15](texts/b8778b155bfde5a28b023a558753c0fa058a52bb9de35c343c250be1bbcdedab.txt) |
 | frontend | @jridgewell/sourcemap-codec@1.6.0 | MIT | development | [text 769d154f](texts/769d154fbde32a915af110b1123650bc79f4cbe675acc66e005265bf069c6c6c.txt) |
 | frontend | @jridgewell/trace-mapping@0.3.31 | MIT | development | [text 769d154f](texts/769d154fbde32a915af110b1123650bc79f4cbe675acc66e005265bf069c6c6c.txt) |
-| frontend | @napi-rs/lzma-linux-x64-gnu@1.5.1 | MIT | development | not installed on this platform |
+| frontend | @napi-rs/lzma-linux-x64-gnu@1.5.1 | MIT | development | Reviewed publisher SPDX declaration + original attribution + canonical terms (no upstream standalone LICENSE): [text b05785f9](texts/b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5.txt), [text 578e2a50](texts/578e2a50ae69cd627c2953f8fa677efbf89f3087efeafff2db65aa31b81dc136.txt), [text 7834d70d](texts/7834d70d367925c2c04144eb00e93685a2e7ce78bd541f5a28424b30e3176b27.txt) |
 | frontend | @nodelib/fs.scandir@2.1.5 | MIT | development | [text 9363d160](texts/9363d160bf41d46d83901a5d24fc3fe2094c2afc17b4a2378914b273977ee2de.txt) |
 | frontend | @nodelib/fs.stat@2.0.5 | MIT | development | [text 9363d160](texts/9363d160bf41d46d83901a5d24fc3fe2094c2afc17b4a2378914b273977ee2de.txt) |
 | frontend | @nodelib/fs.walk@1.2.8 | MIT | development | [text 9363d160](texts/9363d160bf41d46d83901a5d24fc3fe2094c2afc17b4a2378914b273977ee2de.txt) |
@@ -742,14 +742,14 @@ Not installed means absent on this platform; collect notices again for the actua
 | frontend | @rollup/rollup-linux-riscv64-gnu@4.63.1 | MIT | development | not installed on this platform |
 | frontend | @rollup/rollup-linux-riscv64-musl@4.63.1 | MIT | development | not installed on this platform |
 | frontend | @rollup/rollup-linux-s390x-gnu@4.63.1 | MIT | development | not installed on this platform |
-| frontend | @rollup/rollup-linux-x64-gnu@4.63.1 | MIT | development | not installed on this platform |
-| frontend | @rollup/rollup-linux-x64-musl@4.63.1 | MIT | development | not installed on this platform |
+| frontend | @rollup/rollup-linux-x64-gnu@4.63.1 | MIT | development | [text fa1bd040](texts/fa1bd040c5bdeefe65b3821cebf474f2733ce65df13089bd151dda1778e62fe8.txt) |
+| frontend | @rollup/rollup-linux-x64-musl@4.63.1 | MIT | development | [text fa1bd040](texts/fa1bd040c5bdeefe65b3821cebf474f2733ce65df13089bd151dda1778e62fe8.txt) |
 | frontend | @rollup/rollup-openbsd-x64@4.63.1 | MIT | development | not installed on this platform |
 | frontend | @rollup/rollup-openharmony-arm64@4.63.1 | MIT | development | not installed on this platform |
 | frontend | @rollup/rollup-win32-arm64-msvc@4.63.1 | MIT | development | not installed on this platform |
 | frontend | @rollup/rollup-win32-ia32-msvc@4.63.1 | MIT | development | not installed on this platform |
-| frontend | @rollup/rollup-win32-x64-gnu@4.63.1 | MIT | development | [text fa1bd040](texts/fa1bd040c5bdeefe65b3821cebf474f2733ce65df13089bd151dda1778e62fe8.txt) |
-| frontend | @rollup/rollup-win32-x64-msvc@4.63.1 | MIT | development | [text fa1bd040](texts/fa1bd040c5bdeefe65b3821cebf474f2733ce65df13089bd151dda1778e62fe8.txt) |
+| frontend | @rollup/rollup-win32-x64-gnu@4.63.1 | MIT | development | not installed on this platform |
+| frontend | @rollup/rollup-win32-x64-msvc@4.63.1 | MIT | development | not installed on this platform |
 | frontend | @testing-library/dom@10.4.1 | MIT | development | [text bf8fd380](texts/bf8fd38056b7606deccfcadb4d8ca1c210082d8ef5513426d2650daedc30bed3.txt) |
 | frontend | @testing-library/jest-dom@6.9.1 | MIT | development | [text bf8fd380](texts/bf8fd38056b7606deccfcadb4d8ca1c210082d8ef5513426d2650daedc30bed3.txt) |
 | frontend | dom-accessibility-api@0.6.3 | MIT | development | [text 0ffe67fe](texts/0ffe67fe630169de46df2d29dc18f5857b4c98f0f95b0cd9e3c21fef51f9a9b8.txt) |
@@ -762,6 +762,7 @@ Not installed means absent on this platform; collect notices again for the actua
 | frontend | @types/babel__traverse@7.28.0 | MIT | development | [text c2cfccb8](texts/c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383.txt) |
 | frontend | @types/estree@1.0.9 | MIT | development | [text c2cfccb8](texts/c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383.txt) |
 | frontend | @types/json-schema@7.0.15 | MIT | development | [text c2cfccb8](texts/c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383.txt) |
+| frontend | @types/node@22.20.1 | MIT | development | [text c2cfccb8](texts/c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383.txt); [source notice f73bee22](texts/f73bee223f8085be5e6a051b5b00eb49a1ee0df771179fe7c73658dc6f4561bd.txt) |
 | frontend | @types/prop-types@15.7.15 | MIT | development | [text c2cfccb8](texts/c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383.txt) |
 | frontend | @types/react@18.3.31 | MIT | development | [text c2cfccb8](texts/c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383.txt) |
 | frontend | @types/react-dom@18.3.7 | MIT | development | [text c2cfccb8](texts/c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383.txt) |
@@ -1030,6 +1031,7 @@ Not installed means absent on this platform; collect notices again for the actua
 | frontend | type-check@0.4.0 | MIT | development | [text b9eb082c](texts/b9eb082c39fe245e38793699074c394c43a722c51fce031c3c165cb92a31035c.txt) |
 | frontend | typescript@5.9.3 | Apache-2.0 | development | [text a7d00bfd](texts/a7d00bfd54525bc694b6e32f64c7ebcf5e6b7ae3657be5cc12767bce74654a47.txt) |
 | frontend | typescript-eslint@8.70.0 | MIT | development | [text 2eb5c7a0](texts/2eb5c7a0bba9deb77a98c81bf6b9d3fb1c67118eebf968b6b1a787b3f8928ee0.txt) |
+| frontend | undici-types@6.21.0 | MIT | development | [text a6db8096](texts/a6db8096b2707bc0102d256917d4d33f298ba36d8c3f25de067a2b5bb379db27.txt) |
 | frontend | universalify@0.2.0 | MIT | development | [text 3fda5977](texts/3fda5977c0904e226190b4e21d64340c1731e2142d6fe5f3dee0090a216b8b63.txt) |
 | frontend | update-browserslist-db@1.3.2 | MIT | development | [text 9877e90d](texts/9877e90da14aa8c931a1f9d07cc2a20ce119106e5dab1ebb41af865266d0cd2a.txt) |
 | frontend | uri-js@4.4.1 | BSD-2-Clause | development | [text 0af366ef](texts/0af366eff4c01ec147c9c61ea9e8ffad64a4294754c9d79355f3fd1b97cb2fb9.txt) |

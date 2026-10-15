@@ -10,6 +10,9 @@ const approved = new Map([
   ['bser@2.1.1', 'Apache-2.0'], ['eastasianwidth@0.2.0', 'MIT'],
   ['fb-watchman@2.0.2', 'Apache-2.0'], ['keyv@4.5.4', 'MIT'],
   ['natural-compare@1.4.0', 'MIT'], ['dlv@1.1.3', 'MIT'], ['stackback@0.0.2', 'MIT'],
+  // Reviewed 1.5.1 Linux tarball: package.json declares MIT; README identifies
+  // the platform binary. Neither tarball nor upstream v1.5.1 ships LICENSE.
+  ['@napi-rs/lzma-linux-x64-gnu@1.5.1', 'MIT'],
 ]);
 const hash = b => createHash('sha256').update(b).digest('hex');
 function preserve(bytes, source, kind) {

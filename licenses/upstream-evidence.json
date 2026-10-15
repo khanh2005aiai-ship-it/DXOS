@@ -133,5 +133,59 @@
       "packageVersion": "6.0.0",
       "ref": "211fa0ebec9b628affc09219199639887174bfc3"
     }
+  ],
+  "@unrs/resolver-binding-linux-x64-gnu@1.12.2": [
+    {
+      "file": "texts/a9e35996693bd619302922c731fa2f620ad12d5f50b19a37c8a3e0e078c9bd2f.txt",
+      "sha256": "a9e35996693bd619302922c731fa2f620ad12d5f50b19a37c8a3e0e078c9bd2f",
+      "source": "https://raw.githubusercontent.com/unrs/unrs-resolver/ccb26d205e2938b16069c64a28996b48ee97ff94/LICENSE",
+      "packageVersion": "1.12.2",
+      "ref": "ccb26d205e2938b16069c64a28996b48ee97ff94"
+    }
+  ],
+  "@unrs/resolver-binding-linux-x64-musl@1.12.2": [
+    {
+      "file": "texts/a9e35996693bd619302922c731fa2f620ad12d5f50b19a37c8a3e0e078c9bd2f.txt",
+      "sha256": "a9e35996693bd619302922c731fa2f620ad12d5f50b19a37c8a3e0e078c9bd2f",
+      "source": "https://raw.githubusercontent.com/unrs/unrs-resolver/ccb26d205e2938b16069c64a28996b48ee97ff94/LICENSE",
+      "packageVersion": "1.12.2",
+      "ref": "ccb26d205e2938b16069c64a28996b48ee97ff94"
+    }
+  ],
+  "@esbuild/linux-x64@0.28.2": [
+    {
+      "file": "texts/b40ec5baec7bb34fa5b1c09521fa3cd52d5fad7adafed74932a2010d3612a681.txt",
+      "sha256": "b40ec5baec7bb34fa5b1c09521fa3cd52d5fad7adafed74932a2010d3612a681",
+      "source": "https://raw.githubusercontent.com/evanw/esbuild/609683d892977362a0f99026cb74b96263d728a9/LICENSE.md",
+      "packageVersion": "0.28.2",
+      "ref": "609683d892977362a0f99026cb74b96263d728a9"
+    }
+  ],
+  "@esbuild/linux-x64@0.21.5": [
+    {
+      "file": "texts/b40ec5baec7bb34fa5b1c09521fa3cd52d5fad7adafed74932a2010d3612a681.txt",
+      "sha256": "b40ec5baec7bb34fa5b1c09521fa3cd52d5fad7adafed74932a2010d3612a681",
+      "source": "https://raw.githubusercontent.com/evanw/esbuild/fc37c2fa9de2ad77476a6d4a8f1516196b90187e/LICENSE.md",
+      "packageVersion": "0.21.5",
+      "ref": "fc37c2fa9de2ad77476a6d4a8f1516196b90187e"
+    }
+  ],
+  "@rollup/rollup-linux-x64-gnu@4.63.1": [
+    {
+      "file": "texts/fa1bd040c5bdeefe65b3821cebf474f2733ce65df13089bd151dda1778e62fe8.txt",
+      "sha256": "fa1bd040c5bdeefe65b3821cebf474f2733ce65df13089bd151dda1778e62fe8",
+      "source": "https://raw.githubusercontent.com/rollup/rollup/78bfef0cb94479566f81012fafa372c84b90bd34/LICENSE.md",
+      "packageVersion": "4.63.1",
+      "ref": "78bfef0cb94479566f81012fafa372c84b90bd34"
+    }
+  ],
+  "@rollup/rollup-linux-x64-musl@4.63.1": [
+    {
+      "file": "texts/fa1bd040c5bdeefe65b3821cebf474f2733ce65df13089bd151dda1778e62fe8.txt",
+      "sha256": "fa1bd040c5bdeefe65b3821cebf474f2733ce65df13089bd151dda1778e62fe8",
+      "source": "https://raw.githubusercontent.com/rollup/rollup/78bfef0cb94479566f81012fafa372c84b90bd34/LICENSE.md",
+      "packageVersion": "4.63.1",
+      "ref": "78bfef0cb94479566f81012fafa372c84b90bd34"
+    }
   ]
 }

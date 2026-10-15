@@ -316,5 +316,36 @@
     ],
     "evidenceKind": "REVIEWED_PUBLISHER_DECLARATION_WITH_CANONICAL_TERMS",
     "upstreamStandaloneLicense": false
+  },
+  "@napi-rs/lzma-linux-x64-gnu@1.5.1": {
+    "declaredLicense": "MIT",
+    "packageMetadataSha256": "578e2a50ae69cd627c2953f8fa677efbf89f3087efeafff2db65aa31b81dc136",
+    "basis": "Exact published package SPDX declaration plus unchanged original README/metadata/source-header attribution and canonical terms. No standalone upstream LICENSE exists in the reviewed release.",
+    "copyrightPolicy": "Retain original attributions; do not invent holder names, years, or an upstream LICENSE file. Canonical template placeholders remain reference text.",
+    "standardTerms": [
+      {
+        "file": "texts/b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5.txt",
+        "sha256": "b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5",
+        "source": "https://raw.githubusercontent.com/spdx/license-list-data/v3.27.0/text/MIT.txt",
+        "kind": "canonical_SPDX_reference_not_upstream_notice"
+      }
+    ],
+    "originalAttributions": [
+      {
+        "file": "texts/578e2a50ae69cd627c2953f8fa677efbf89f3087efeafff2db65aa31b81dc136.txt",
+        "sha256": "578e2a50ae69cd627c2953f8fa677efbf89f3087efeafff2db65aa31b81dc136",
+        "source": "@napi-rs/lzma-linux-x64-gnu@1.5.1/package.json",
+        "kind": "original_publisher_declaration"
+      },
+      {
+        "file": "texts/7834d70d367925c2c04144eb00e93685a2e7ce78bd541f5a28424b30e3176b27.txt",
+        "sha256": "7834d70d367925c2c04144eb00e93685a2e7ce78bd541f5a28424b30e3176b27",
+        "source": "@napi-rs/lzma-linux-x64-gnu@1.5.1/README.md",
+        "kind": "original_publisher_attribution"
+      }
+    ],
+    "additionalNotices": [],
+    "evidenceKind": "REVIEWED_PUBLISHER_DECLARATION_WITH_CANONICAL_TERMS",
+    "upstreamStandaloneLicense": false
   }
 }

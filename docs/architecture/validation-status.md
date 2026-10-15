@@ -33,3 +33,13 @@ Chưa triển khai domain/máy chủ production. Keycloak start-dev/H2, OpenBao 
 Trên database MySQL tạm có tên riêng: replay đủ 24 migration, không drift, chạy seed:demo-admin/seed:demo, khởi động frontend/backend ở port tạm, đăng nhập qua proxy HTTP 200, đọc profile/tổ chức/phòng ban/nhân sự/công việc/tài liệu/thông báo/vai trò HTTP 200. Foreign organization bị từ chối 403; logout 204 và session cũ 401. Database tạm được dọn sau kiểm thử; không reset dx_os. AI trong lượt này dùng mock, không xác nhận provider thật.
 
 Bộ lọc export chỉ loại /work ở root; không loại backend/src/modules/work. Git giữ nguyên byte của licenses/ để checksum không bị đổi theo kiểu xuống dòng của hệ điều hành. File Vite .js/.d.ts sinh tự động không được đưa vào source; vite.config.ts là cấu hình gốc.
+
+## Sửa lỗi CI Linux — 16/10/2026
+
+Run 38772878314 thất bại ở hai bước riêng: frontend Docker thiếu dependency khai báo kiểu Node khi cài frontend độc lập; bộ thu thập legal evidence chưa có review cho @napi-rs/lzma-linux-x64-gnu@1.5.1. Backend test suite trong run này đã PASS; kết quả local trước đó không thay thế kết quả CI.
+
+Frontend khai báo trực tiếp @types/node 22.20.1 và lockfile tương ứng. Production frontend image đã build thành công trên Linux, không dựa vào node_modules của backend trên máy host.
+
+Đã kiểm tra tarball nguyên bản và repository upstream tại tag v1.5.1 của gói Linux: package.json khai báo MIT, README xác định platform binary; không có standalone LICENSE. Review chỉ áp dụng chính xác phiên bản 1.5.1, lưu nguyên metadata/README và canonical terms theo cơ chế hiện có; không dựng notice hay tự phê duyệt phiên bản khác. Cài root/frontend trong Linux container sạch và chạy fetch/review/strict đạt 941/941 installed entries, 13 reviewed declaration entries, không thiếu bằng chứng. Đây là bằng chứng và giới hạn pháp lý được công khai, không phải chứng nhận pháp lý.
+
+Trạng thái CI remote của bản sửa cần xem trực tiếp tại Actions theo commit; không suy diễn từ Docker/local PASS.
