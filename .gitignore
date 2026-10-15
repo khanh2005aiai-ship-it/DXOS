@@ -16,9 +16,9 @@ coverage/
 database/*.db
 database/*.db-journal
 
-# Codex workspace artifacts
-work/
-outputs/
+# Local workspace artifacts
+/work/
+/outputs/
 
 # Editor and operating-system files
 .vscode/
@@ -46,3 +46,7 @@ backups/
 *.key
 # Keep example configuration, never real configuration
 !.env.example
+
+# TypeScript-generated Vite configuration output
+/frontend/vite.config.js
+/frontend/vite.config.d.ts

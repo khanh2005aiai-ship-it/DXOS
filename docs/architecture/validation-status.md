@@ -25,3 +25,11 @@ CI GitHub là kết quả riêng theo từng commit. Xem [Actions](https://githu
 ## Giới hạn triển khai
 
 Chưa triển khai domain/máy chủ production. Keycloak start-dev/H2, OpenBao Raft một node và seal custody cùng máy chỉ dành local/demo. ClamAV không có libunrar, không bảo đảm quét RAR. Binary distribution cần source/notices đúng phiên bản và nền tảng. Xem [third-party notices](../../THIRD_PARTY_NOTICES.md).
+
+## Kiểm tra cài đặt từ bản clone sạch
+
+Đã cài root/frontend bằng npm ci từ lockfile; Prisma generate/validate, build và lint cả hai phần đạt. Backend 1.295 tests, frontend 270 tests đạt; 6 kiểm tra hồi quy bộ lọc source và lượt export thực tế giữ đủ 15 file module work. Backend image đã build trong Linux Docker.
+
+Trên database MySQL tạm có tên riêng: replay đủ 24 migration, không drift, chạy seed:demo-admin/seed:demo, khởi động frontend/backend ở port tạm, đăng nhập qua proxy HTTP 200, đọc profile/tổ chức/phòng ban/nhân sự/công việc/tài liệu/thông báo/vai trò HTTP 200. Foreign organization bị từ chối 403; logout 204 và session cũ 401. Database tạm được dọn sau kiểm thử; không reset dx_os. AI trong lượt này dùng mock, không xác nhận provider thật.
+
+Bộ lọc export chỉ loại /work ở root; không loại backend/src/modules/work. Git giữ nguyên byte của licenses/ để checksum không bị đổi theo kiểu xuống dòng của hệ điều hành. File Vite .js/.d.ts sinh tự động không được đưa vào source; vite.config.ts là cấu hình gốc.

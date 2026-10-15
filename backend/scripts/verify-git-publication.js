@@ -2,6 +2,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
+const { isPrivateOrGeneratedPath } = require('./source-publication-policy');
 const root = path.resolve(__dirname, '../..');
 function git(args, input) {
   const r = spawnSync('git', ['--git-dir=.git', '--work-tree=.', ...args], {
@@ -55,7 +56,7 @@ let checked = 0;
 for (const name of paths) {
   const file = path.join(root, name);
   if (!fs.existsSync(file) || !fs.statSync(file).isFile()) continue;
-  if (/(^|\/)(?:\.secrets|node_modules|dist|coverage|outputs|security-artifacts)(\/|$)|(^|\/)\.env(?:$|\.(?!example$))|\.(?:dump|sql\.gz|pfx|p12|key|pem|zip|7z)$/i.test(name)) suspiciousPaths.push(name);
+  if (isPrivateOrGeneratedPath(name)) suspiciousPaths.push(name);
   const size = fs.statSync(file).size;
   if (size > 10 * 1024 * 1024) largeFiles.push({ path: name, bytes: size });
   const matches = findings(fs.readFileSync(file)); checked++;

@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 const { createHash } = require('node:crypto');
+const { shouldExcludeFromSourceExport } = require('./source-publication-policy');
 const root = path.resolve(__dirname, '../..');
 const destinationArg = process.argv[2];
 if (!destinationArg || !path.isAbsolute(destinationArg)) throw new Error('Pass a new absolute destination path');
@@ -13,7 +14,7 @@ if (inventory.status !== 0) throw new Error('Source inventory failed');
 const excluded = [], copied = [];
 fs.mkdirSync(destination, { recursive: true });
 for (const name of inventory.stdout.split('\0').filter(Boolean)) {
-  if (/(^|\/)(?:node_modules|dist|coverage|\.git|\.secrets|outputs|work|security-artifacts|backups)(\/|$)|(^|\/)\.env(?:$|\.(?!example$))|^\.security|^docs\/(?:reports|project-history)\/|\.(?:docx|pdf|dump|sql\.gz|zip|7z|tar\.gz|key|pem|p12|pfx)$/i.test(name) || /^docs\/.*\.(?:png|jpg|jpeg)$/i.test(name)) {
+  if (shouldExcludeFromSourceExport(name)) {
     excluded.push(name); continue;
   }
   const from = path.resolve(root, name), to = path.resolve(destination, name);

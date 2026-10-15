@@ -12,3 +12,8 @@
 /security-artifacts export-ignore
 /docs/project-history export-ignore
 /docs/reports export-ignore
+
+# Preserve exact upstream legal evidence bytes and recorded checksums.
+licenses/** -text
+LICENSE -text
+NOTICE -text
