@@ -1,0 +1,13 @@
+# In-app notifications
+
+Notifications belong to one organization and one active member. UUIDs and DATETIME(6) follow the existing schema. A composite foreign key to membership prevents mismatched recipients; deletion is restricted. The new additive migration creates an empty table without changing historical data. Rollback requires stopping producers and an explicitly approved export/drop of this new table; historical migrations must not be edited.
+
+The two indexes support tenant/recipient chronology and read-state chronology. readAt is the only persisted read state; isRead is derived. No public create, edit-content, delete, or administrator inbox API exists. Retention is indefinite in this foundation; future retention needs a separate policy.
+
+GET /api/v1/organizations/:organizationId/notifications and PATCH /api/v1/organizations/:organizationId/notifications/:notificationId/read use existing JWT identity and organization route context. Active user, organization and membership are required; no administrative role is required. Every query scopes both recipient and tenant. Multi-organization users explicitly choose one organization per request. Invalid/foreign identifiers return 403; an unavailable pagination cursor returns 400. Missing/invalid authentication returns 401. Extra query/body fields are rejected.
+
+Pages default to 25, maximum 100, ordered createdAt descending then UUID descending. An optional read/unread state and after UUID are supported. Cursor ownership is checked independently of its current read state so marking it read does not invalidate unread pagination. This is a live feed, not a snapshot across requests.
+
+NotificationService is the only creation path. Its closed catalog currently contains organization.updated, produced for the acting user after an authorized organization name update. Title/body are fixed server text (limits 200/1000 characters); metadata permits only changedFields containing name, at most 1024 UTF-8 bytes. User-controlled prose and credentials are never copied. Future types must supply their own explicit validation.
+
+Creation and notification.created audit recording join the originating serializable organization transaction. Any failure rolls back all three writes. Standalone internal calls use a serializable transaction with three bounded conflict attempts. Mark-read uses the same isolation/retry policy and changes only readAt once. Reads are not audited. HTTP audit actor and correlation come from existing request context; standalone calls use SYSTEM. No delivery providers or asynchronous infrastructure are introduced.

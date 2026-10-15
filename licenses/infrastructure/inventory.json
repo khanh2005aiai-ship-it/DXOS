@@ -1,0 +1,101 @@
+[
+  {
+    "component": "Apache License 2.0",
+    "version": "2.0",
+    "license": "Apache-2.0",
+    "source": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+    "file": "infrastructure/apache-2.0.txt",
+    "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "status": "TEXT_COLLECTED"
+  },
+  {
+    "component": "Keycloak",
+    "version": "26.8.1",
+    "license": "Apache-2.0",
+    "source": "https://raw.githubusercontent.com/keycloak/keycloak/26.8.1/LICENSE.txt",
+    "file": "infrastructure/keycloak.txt",
+    "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "status": "TEXT_COLLECTED"
+  },
+  {
+    "component": "Apache APISIX",
+    "version": "3.19.0",
+    "license": "Apache-2.0",
+    "source": "https://raw.githubusercontent.com/apache/apisix/3.19.0/LICENSE",
+    "file": "infrastructure/apisix.txt",
+    "sha256": "f314c26b97520df58cc9f29f30dc1f65f3e0235365b6dce0e3b6adc388958aeb",
+    "status": "TEXT_COLLECTED"
+  },
+  {
+    "component": "Apache APISIX notices",
+    "version": "3.19.0",
+    "license": "NOTICE",
+    "source": "https://raw.githubusercontent.com/apache/apisix/3.19.0/NOTICE",
+    "file": "infrastructure/apisix-notice.txt",
+    "sha256": "25235d29b8c0c24d06a0166b45297b173cf251786cb24a57e91218f23ecdf63c",
+    "status": "TEXT_COLLECTED"
+  },
+  {
+    "component": "OpenBao",
+    "version": "2.7.1",
+    "license": "MPL-2.0",
+    "source": "https://raw.githubusercontent.com/openbao/openbao/v2.7.1/LICENSE",
+    "file": "infrastructure/openbao.txt",
+    "sha256": "d6b1a865f1c8c697d343bd4e0ce61025f91898486a1f00d727f32e8644af77d3",
+    "status": "TEXT_COLLECTED"
+  },
+  {
+    "component": "Valkey",
+    "version": "9.1.2",
+    "license": "BSD-3-Clause",
+    "source": "https://raw.githubusercontent.com/valkey-io/valkey/9.1.2/COPYING",
+    "file": "infrastructure/valkey.txt",
+    "sha256": "1a53dca3aab7ce048e91e77b03c0342f3075366f9dede8ec4d19d0cf229e12a0",
+    "status": "TEXT_COLLECTED"
+  },
+  {
+    "component": "ClamAV",
+    "version": "1.4.4",
+    "license": "GPL-2.0",
+    "source": "https://raw.githubusercontent.com/Cisco-Talos/clamav/clamav-1.4.4/COPYING.txt",
+    "file": "infrastructure/clamav.txt",
+    "sha256": "0c4fd2fa9733fc9122503797648710851e4ee6d9e4969dd33fcbd8c63cd2f584",
+    "status": "TEXT_COLLECTED"
+  },
+  {
+    "component": "Trivy",
+    "version": "0.69.3",
+    "license": "Apache-2.0",
+    "source": "https://raw.githubusercontent.com/aquasecurity/trivy/v0.69.3/LICENSE",
+    "file": "infrastructure/trivy.txt",
+    "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+    "status": "TEXT_COLLECTED"
+  },
+  {
+    "component": "Inter font",
+    "version": "4.1",
+    "license": "OFL-1.1",
+    "source": "https://raw.githubusercontent.com/rsms/inter/v4.1/LICENSE.txt",
+    "file": "infrastructure/inter.txt",
+    "sha256": "262481e844521b326f5ecd053e59b98c8b2da78c8ee1bdbb6e8174305e54935a",
+    "status": "TEXT_COLLECTED"
+  },
+  {
+    "component": "Node.js container runtime and bundled components",
+    "version": "22.23.3",
+    "license": "MIT and bundled licenses",
+    "source": "https://raw.githubusercontent.com/nodejs/node/v22.23.3/LICENSE",
+    "file": "infrastructure/node.txt",
+    "sha256": "c738ae413cf561f174e34f6961f8ca458aae2369a73640dda6234c629b98bcc4",
+    "status": "TEXT_COLLECTED"
+  },
+  {
+    "component": "Node.js local tooling and bundled components",
+    "version": "22.21.1",
+    "license": "MIT and bundled licenses",
+    "source": "https://raw.githubusercontent.com/nodejs/node/v22.21.1/LICENSE",
+    "file": "infrastructure/node-local.txt",
+    "sha256": "e991d81497a85bb24fc6bffae0a3637a6accd6c6bc5ce1f2c5698bd555cf9d49",
+    "status": "TEXT_COLLECTED"
+  }
+]

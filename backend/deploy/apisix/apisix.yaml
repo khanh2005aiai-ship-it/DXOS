@@ -1,0 +1,15 @@
+routes:
+  - id: dxos-api
+    uri: /api/*
+    plugins:
+      limit-req:
+        rate: 30
+        burst: 60
+        rejected_code: 429
+        key_type: var
+        key: remote_addr
+    upstream:
+      type: roundrobin
+      nodes:
+        "backend:3000": 1
+#END

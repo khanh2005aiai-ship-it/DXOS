@@ -1,0 +1,1 @@
+export { PayrollPeriodDetailModal } from './ChiTietKyLuongModal';

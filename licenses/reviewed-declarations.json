@@ -1,0 +1,320 @@
+{
+  "@epic-web/invariant@1.0.0": {
+    "declaredLicense": "MIT",
+    "packageMetadataSha256": "7ea6214732ffa08ae74509ba2a86d58e04a70e500933ad9c885fde92000a6503",
+    "basis": "Exact published package SPDX declaration plus unchanged original README/metadata/source-header attribution and canonical terms. No standalone upstream LICENSE exists in the reviewed release.",
+    "copyrightPolicy": "Retain original attributions; do not invent holder names, years, or an upstream LICENSE file. Canonical template placeholders remain reference text.",
+    "standardTerms": [
+      {
+        "file": "texts/b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5.txt",
+        "sha256": "b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5",
+        "source": "https://raw.githubusercontent.com/spdx/license-list-data/v3.27.0/text/MIT.txt",
+        "kind": "canonical_SPDX_reference_not_upstream_notice"
+      }
+    ],
+    "originalAttributions": [
+      {
+        "file": "texts/7ea6214732ffa08ae74509ba2a86d58e04a70e500933ad9c885fde92000a6503.txt",
+        "sha256": "7ea6214732ffa08ae74509ba2a86d58e04a70e500933ad9c885fde92000a6503",
+        "source": "@epic-web/invariant@1.0.0/package.json",
+        "kind": "original_publisher_declaration"
+      },
+      {
+        "file": "texts/cc2268af129c704007091211aa24976fb884d7278905f6222f44ea47756514fc.txt",
+        "sha256": "cc2268af129c704007091211aa24976fb884d7278905f6222f44ea47756514fc",
+        "source": "@epic-web/invariant@1.0.0/README.md",
+        "kind": "original_publisher_attribution"
+      }
+    ],
+    "additionalNotices": [],
+    "evidenceKind": "REVIEWED_PUBLISHER_DECLARATION_WITH_CANONICAL_TERMS",
+    "upstreamStandaloneLicense": false
+  },
+  "@humanfs/types@0.15.0": {
+    "declaredLicense": "Apache-2.0",
+    "packageMetadataSha256": "1b849aa49814883fc0e70ca461c9faccb675ed1c801e784f1858e75e3b36eec5",
+    "basis": "Exact published package SPDX declaration plus unchanged original README/metadata/source-header attribution and canonical terms. No standalone upstream LICENSE exists in the reviewed release.",
+    "copyrightPolicy": "Retain original attributions; do not invent holder names, years, or an upstream LICENSE file. Canonical template placeholders remain reference text.",
+    "standardTerms": [
+      {
+        "file": "texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "source": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+        "kind": "canonical_license_reference"
+      },
+      {
+        "file": "texts/b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5.txt",
+        "sha256": "b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5",
+        "source": "https://raw.githubusercontent.com/spdx/license-list-data/v3.27.0/text/MIT.txt",
+        "kind": "canonical_SPDX_reference_not_upstream_notice"
+      }
+    ],
+    "originalAttributions": [
+      {
+        "file": "texts/1b849aa49814883fc0e70ca461c9faccb675ed1c801e784f1858e75e3b36eec5.txt",
+        "sha256": "1b849aa49814883fc0e70ca461c9faccb675ed1c801e784f1858e75e3b36eec5",
+        "source": "@humanfs/types@0.15.0/package.json",
+        "kind": "original_publisher_declaration"
+      },
+      {
+        "file": "texts/e1076e47ea96eef79e05496912ad03a9fa8031e1bf4847aab1a9554aef5cc5c0.txt",
+        "sha256": "e1076e47ea96eef79e05496912ad03a9fa8031e1bf4847aab1a9554aef5cc5c0",
+        "source": "@humanfs/types@0.15.0/README.md",
+        "kind": "original_publisher_attribution"
+      }
+    ],
+    "additionalNotices": [],
+    "evidenceKind": "REVIEWED_PUBLISHER_DECLARATION_WITH_CANONICAL_TERMS",
+    "upstreamStandaloneLicense": false
+  },
+  "bser@2.1.1": {
+    "declaredLicense": "Apache-2.0",
+    "packageMetadataSha256": "1e90f98039f760ebd91af36846690b70a09154608f228967d3fa7858402b3de6",
+    "basis": "Exact published package SPDX declaration plus unchanged original README/metadata/source-header attribution and canonical terms. No standalone upstream LICENSE exists in the reviewed release.",
+    "copyrightPolicy": "Retain original attributions; do not invent holder names, years, or an upstream LICENSE file. Canonical template placeholders remain reference text.",
+    "standardTerms": [
+      {
+        "file": "texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "source": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+        "kind": "canonical_license_reference"
+      },
+      {
+        "file": "texts/b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5.txt",
+        "sha256": "b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5",
+        "source": "https://raw.githubusercontent.com/spdx/license-list-data/v3.27.0/text/MIT.txt",
+        "kind": "canonical_SPDX_reference_not_upstream_notice"
+      }
+    ],
+    "originalAttributions": [
+      {
+        "file": "texts/1e90f98039f760ebd91af36846690b70a09154608f228967d3fa7858402b3de6.txt",
+        "sha256": "1e90f98039f760ebd91af36846690b70a09154608f228967d3fa7858402b3de6",
+        "source": "bser@2.1.1/package.json",
+        "kind": "original_publisher_declaration"
+      },
+      {
+        "file": "texts/fbc3054ed9e51cce426c17344d2c0b9a3792e7f13828c2da2941e92032571650.txt",
+        "sha256": "fbc3054ed9e51cce426c17344d2c0b9a3792e7f13828c2da2941e92032571650",
+        "source": "bser@2.1.1/README.md",
+        "kind": "original_publisher_attribution"
+      }
+    ],
+    "additionalNotices": [
+      {
+        "file": "texts/b553d190a9a0bcf82321215b718a73029b43b44dc54ed1f8fb08b8b0fdca263a.txt",
+        "sha256": "b553d190a9a0bcf82321215b718a73029b43b44dc54ed1f8fb08b8b0fdca263a",
+        "source": "node_modules/bser/index.js",
+        "kind": "original_source_header"
+      }
+    ],
+    "evidenceKind": "REVIEWED_PUBLISHER_DECLARATION_WITH_CANONICAL_TERMS",
+    "upstreamStandaloneLicense": false
+  },
+  "eastasianwidth@0.2.0": {
+    "declaredLicense": "MIT",
+    "packageMetadataSha256": "51db62f97656d02d4bc9670393cae42930dbd1ed89f5837056851807e602867a",
+    "basis": "Exact published package SPDX declaration plus unchanged original README/metadata/source-header attribution and canonical terms. No standalone upstream LICENSE exists in the reviewed release.",
+    "copyrightPolicy": "Retain original attributions; do not invent holder names, years, or an upstream LICENSE file. Canonical template placeholders remain reference text.",
+    "standardTerms": [
+      {
+        "file": "texts/b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5.txt",
+        "sha256": "b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5",
+        "source": "https://raw.githubusercontent.com/spdx/license-list-data/v3.27.0/text/MIT.txt",
+        "kind": "canonical_SPDX_reference_not_upstream_notice"
+      }
+    ],
+    "originalAttributions": [
+      {
+        "file": "texts/51db62f97656d02d4bc9670393cae42930dbd1ed89f5837056851807e602867a.txt",
+        "sha256": "51db62f97656d02d4bc9670393cae42930dbd1ed89f5837056851807e602867a",
+        "source": "eastasianwidth@0.2.0/package.json",
+        "kind": "original_publisher_declaration"
+      },
+      {
+        "file": "texts/5a20e0a3c5f1a6b449dd3fee8e3f0c7dc0a6e508c93fa5703d7c8823d35aed54.txt",
+        "sha256": "5a20e0a3c5f1a6b449dd3fee8e3f0c7dc0a6e508c93fa5703d7c8823d35aed54",
+        "source": "eastasianwidth@0.2.0/README.md",
+        "kind": "original_publisher_attribution"
+      }
+    ],
+    "additionalNotices": [],
+    "evidenceKind": "REVIEWED_PUBLISHER_DECLARATION_WITH_CANONICAL_TERMS",
+    "upstreamStandaloneLicense": false
+  },
+  "fb-watchman@2.0.2": {
+    "declaredLicense": "Apache-2.0",
+    "packageMetadataSha256": "1cbf98d28443db3b03e6fe0425fcebbea9aa6569c421abee605da0fd61d612ee",
+    "basis": "Exact published package SPDX declaration plus unchanged original README/metadata/source-header attribution and canonical terms. No standalone upstream LICENSE exists in the reviewed release.",
+    "copyrightPolicy": "Retain original attributions; do not invent holder names, years, or an upstream LICENSE file. Canonical template placeholders remain reference text.",
+    "standardTerms": [
+      {
+        "file": "texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "source": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+        "kind": "canonical_license_reference"
+      },
+      {
+        "file": "texts/b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5.txt",
+        "sha256": "b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5",
+        "source": "https://raw.githubusercontent.com/spdx/license-list-data/v3.27.0/text/MIT.txt",
+        "kind": "canonical_SPDX_reference_not_upstream_notice"
+      }
+    ],
+    "originalAttributions": [
+      {
+        "file": "texts/1cbf98d28443db3b03e6fe0425fcebbea9aa6569c421abee605da0fd61d612ee.txt",
+        "sha256": "1cbf98d28443db3b03e6fe0425fcebbea9aa6569c421abee605da0fd61d612ee",
+        "source": "fb-watchman@2.0.2/package.json",
+        "kind": "original_publisher_declaration"
+      },
+      {
+        "file": "texts/2b5f0e7274a619ee2b37eee170bf1d32ffae35e9806312e886561f93ceea80df.txt",
+        "sha256": "2b5f0e7274a619ee2b37eee170bf1d32ffae35e9806312e886561f93ceea80df",
+        "source": "fb-watchman@2.0.2/README.md",
+        "kind": "original_publisher_attribution"
+      }
+    ],
+    "additionalNotices": [
+      {
+        "file": "texts/f48cc46e215f7c409556301979ce32b2679d5077512c7bd19ee33ba571d64ab6.txt",
+        "sha256": "f48cc46e215f7c409556301979ce32b2679d5077512c7bd19ee33ba571d64ab6",
+        "source": "node_modules/fb-watchman/index.js",
+        "kind": "original_source_header"
+      }
+    ],
+    "evidenceKind": "REVIEWED_PUBLISHER_DECLARATION_WITH_CANONICAL_TERMS",
+    "upstreamStandaloneLicense": false
+  },
+  "keyv@4.5.4": {
+    "declaredLicense": "MIT",
+    "packageMetadataSha256": "e8afd30f2f2a40ef5023928b50fdaed3a3338aa7e1c4e86205413afb05e8a099",
+    "basis": "Exact published package SPDX declaration plus unchanged original README/metadata/source-header attribution and canonical terms. No standalone upstream LICENSE exists in the reviewed release.",
+    "copyrightPolicy": "Retain original attributions; do not invent holder names, years, or an upstream LICENSE file. Canonical template placeholders remain reference text.",
+    "standardTerms": [
+      {
+        "file": "texts/b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5.txt",
+        "sha256": "b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5",
+        "source": "https://raw.githubusercontent.com/spdx/license-list-data/v3.27.0/text/MIT.txt",
+        "kind": "canonical_SPDX_reference_not_upstream_notice"
+      }
+    ],
+    "originalAttributions": [
+      {
+        "file": "texts/e8afd30f2f2a40ef5023928b50fdaed3a3338aa7e1c4e86205413afb05e8a099.txt",
+        "sha256": "e8afd30f2f2a40ef5023928b50fdaed3a3338aa7e1c4e86205413afb05e8a099",
+        "source": "keyv@4.5.4/package.json",
+        "kind": "original_publisher_declaration"
+      },
+      {
+        "file": "texts/c39e1b3f735bb9302eb3cbd84aeb48c4311db64381f9e0a1aa4a61ddf59ce890.txt",
+        "sha256": "c39e1b3f735bb9302eb3cbd84aeb48c4311db64381f9e0a1aa4a61ddf59ce890",
+        "source": "keyv@4.5.4/README.md",
+        "kind": "original_publisher_attribution"
+      }
+    ],
+    "additionalNotices": [],
+    "evidenceKind": "REVIEWED_PUBLISHER_DECLARATION_WITH_CANONICAL_TERMS",
+    "upstreamStandaloneLicense": false
+  },
+  "natural-compare@1.4.0": {
+    "declaredLicense": "MIT",
+    "packageMetadataSha256": "3d99911ccfa0ca34ae0c68bfd32c038b952542e55db7c649c37b11dd1573f6af",
+    "basis": "Exact published package SPDX declaration plus unchanged original README/metadata/source-header attribution and canonical terms. No standalone upstream LICENSE exists in the reviewed release.",
+    "copyrightPolicy": "Retain original attributions; do not invent holder names, years, or an upstream LICENSE file. Canonical template placeholders remain reference text.",
+    "standardTerms": [
+      {
+        "file": "texts/b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5.txt",
+        "sha256": "b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5",
+        "source": "https://raw.githubusercontent.com/spdx/license-list-data/v3.27.0/text/MIT.txt",
+        "kind": "canonical_SPDX_reference_not_upstream_notice"
+      }
+    ],
+    "originalAttributions": [
+      {
+        "file": "texts/3d99911ccfa0ca34ae0c68bfd32c038b952542e55db7c649c37b11dd1573f6af.txt",
+        "sha256": "3d99911ccfa0ca34ae0c68bfd32c038b952542e55db7c649c37b11dd1573f6af",
+        "source": "natural-compare@1.4.0/package.json",
+        "kind": "original_publisher_declaration"
+      },
+      {
+        "file": "texts/ced6cb1fe6ee15a32c63ea8c7e0425454e80456a890c6df3909429530566d40a.txt",
+        "sha256": "ced6cb1fe6ee15a32c63ea8c7e0425454e80456a890c6df3909429530566d40a",
+        "source": "natural-compare@1.4.0/README.md",
+        "kind": "original_publisher_attribution"
+      }
+    ],
+    "additionalNotices": [],
+    "evidenceKind": "REVIEWED_PUBLISHER_DECLARATION_WITH_CANONICAL_TERMS",
+    "upstreamStandaloneLicense": false
+  },
+  "dlv@1.1.3": {
+    "declaredLicense": "MIT",
+    "packageMetadataSha256": "d0355a98f75d3547e341ff1cbade270c5d5e9b109dd2b03163178c58b8d525d2",
+    "basis": "Exact published package SPDX declaration plus unchanged original README/metadata/source-header attribution and canonical terms. No standalone upstream LICENSE exists in the reviewed release.",
+    "copyrightPolicy": "Retain original attributions; do not invent holder names, years, or an upstream LICENSE file. Canonical template placeholders remain reference text.",
+    "standardTerms": [
+      {
+        "file": "texts/b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5.txt",
+        "sha256": "b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5",
+        "source": "https://raw.githubusercontent.com/spdx/license-list-data/v3.27.0/text/MIT.txt",
+        "kind": "canonical_SPDX_reference_not_upstream_notice"
+      }
+    ],
+    "originalAttributions": [
+      {
+        "file": "texts/d0355a98f75d3547e341ff1cbade270c5d5e9b109dd2b03163178c58b8d525d2.txt",
+        "sha256": "d0355a98f75d3547e341ff1cbade270c5d5e9b109dd2b03163178c58b8d525d2",
+        "source": "dlv@1.1.3/package.json",
+        "kind": "original_publisher_declaration"
+      },
+      {
+        "file": "texts/9c859d9401ff1e3c62d84595ae8fb368787a6e89cd819b811be06abb2cde26db.txt",
+        "sha256": "9c859d9401ff1e3c62d84595ae8fb368787a6e89cd819b811be06abb2cde26db",
+        "source": "dlv@1.1.3/README.md",
+        "kind": "original_publisher_attribution"
+      }
+    ],
+    "additionalNotices": [],
+    "evidenceKind": "REVIEWED_PUBLISHER_DECLARATION_WITH_CANONICAL_TERMS",
+    "upstreamStandaloneLicense": false
+  },
+  "stackback@0.0.2": {
+    "declaredLicense": "MIT",
+    "packageMetadataSha256": "4d984909b27d37d2f1a379b9cda7292a6e3a133c076df166d740a17514ac6e60",
+    "basis": "Exact published package SPDX declaration plus unchanged original README/metadata/source-header attribution and canonical terms. No standalone upstream LICENSE exists in the reviewed release.",
+    "copyrightPolicy": "Retain original attributions; do not invent holder names, years, or an upstream LICENSE file. Canonical template placeholders remain reference text.",
+    "standardTerms": [
+      {
+        "file": "texts/b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5.txt",
+        "sha256": "b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5",
+        "source": "https://raw.githubusercontent.com/spdx/license-list-data/v3.27.0/text/MIT.txt",
+        "kind": "canonical_SPDX_reference_not_upstream_notice"
+      }
+    ],
+    "originalAttributions": [
+      {
+        "file": "texts/4d984909b27d37d2f1a379b9cda7292a6e3a133c076df166d740a17514ac6e60.txt",
+        "sha256": "4d984909b27d37d2f1a379b9cda7292a6e3a133c076df166d740a17514ac6e60",
+        "source": "stackback@0.0.2/package.json",
+        "kind": "original_publisher_declaration"
+      },
+      {
+        "file": "texts/0ac49857291755487f92130e4e2eec3e88b8012a7e42a6549763929ba4e6a4e5.txt",
+        "sha256": "0ac49857291755487f92130e4e2eec3e88b8012a7e42a6549763929ba4e6a4e5",
+        "source": "stackback@0.0.2/README.md",
+        "kind": "original_publisher_attribution"
+      }
+    ],
+    "additionalNotices": [
+      {
+        "file": "texts/50e3a58083f6fa4aa476c27ebc77b9ed03f38be59fc4127754999c5689b85152.txt",
+        "sha256": "50e3a58083f6fa4aa476c27ebc77b9ed03f38be59fc4127754999c5689b85152",
+        "source": "frontend/node_modules/stackback/formatstack.js",
+        "kind": "original_source_header"
+      }
+    ],
+    "evidenceKind": "REVIEWED_PUBLISHER_DECLARATION_WITH_CANONICAL_TERMS",
+    "upstreamStandaloneLicense": false
+  }
+}

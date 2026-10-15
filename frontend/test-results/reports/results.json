@@ -1,0 +1,38 @@
+{
+  "results": [
+    {
+      "name": "Real login and report page",
+      "status": "PASS"
+    },
+    {
+      "name": "KPI, chart and department data",
+      "status": "PASS"
+    },
+    {
+      "name": "Department filter and grouping",
+      "status": "PASS"
+    },
+    {
+      "name": "Permission checked CSV download and audit",
+      "status": "PASS"
+    },
+    {
+      "name": "Empty range uses empty states",
+      "status": "PASS"
+    },
+    {
+      "name": "Responsive mobile layout",
+      "status": "PASS"
+    },
+    {
+      "name": "Restricted real user sees neither payroll nor export",
+      "status": "PASS"
+    },
+    {
+      "name": "Zero browser console errors",
+      "status": "PASS"
+    }
+  ],
+  "consoleErrors": [],
+  "disposableDatabaseRemoved": true
+}

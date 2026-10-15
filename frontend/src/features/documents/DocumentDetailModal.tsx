@@ -1,0 +1,1 @@
+export { DocumentDetailModal } from './ChiTietHoSoModal';

@@ -1,0 +1,17 @@
+**/node_modules
+**/dist
+**/coverage
+.git
+.npm-cache
+**/.env
+**/.env.*
+**/*.log
+.security*
+.secrets
+outputs
+work
+security-artifacts
+docs
+tests
+*.docx
+*.pdf

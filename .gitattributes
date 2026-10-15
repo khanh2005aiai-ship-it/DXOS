@@ -1,0 +1,14 @@
+* text=auto
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.woff2 binary
+*.pdf binary
+*.docx binary
+# Exclude local and historical working material from git archive.
+/outputs export-ignore
+/work export-ignore
+/.secrets export-ignore
+/security-artifacts export-ignore
+/docs/project-history export-ignore
+/docs/reports export-ignore

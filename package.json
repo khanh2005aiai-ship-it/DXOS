@@ -1,0 +1,35 @@
+{
+  "name": "dx-os",
+  "version": "0.1.0",
+  "private": true,
+  "description": "DX-OS — Digital Enterprise Operating System",
+  "packageManager": "npm@10.9.4",
+  "engines": {
+    "node": ">=22.12.0",
+    "npm": ">=10.0.0"
+  },
+  "workspaces": [
+    "backend"
+  ],
+  "overrides": {
+    "@prisma/config": {
+      "deepmerge-ts": "8.0.2"
+    }
+  },
+  "scripts": {
+    "dev:backend": "npm --workspace @dx-os/backend run dev",
+    "build:backend": "npm --workspace @dx-os/backend run build",
+    "test:backend": "jest --config jest.config.cjs --runInBand",
+    "lint:backend": "eslint backend/src tests/backend --max-warnings=0",
+    "db:generate": "npm --workspace @dx-os/backend run db:generate",
+    "db:validate": "npm --workspace @dx-os/backend run db:validate",
+    "db:migrate:dev": "npm --workspace @dx-os/backend run db:migrate:dev",
+    "db:migrate:deploy": "npm --workspace @dx-os/backend run db:migrate:deploy",
+    "db:migrate:status": "npm --workspace @dx-os/backend run db:migrate:status",
+    "db:migration:validate": "npm --workspace @dx-os/backend run db:migration:validate",
+    "check": "npm run lint:backend && npm run test:backend && npm run build:backend",
+    "test": "npm run test:backend",
+    "build": "npm run build:backend"
+  },
+  "license": "Apache-2.0"
+}

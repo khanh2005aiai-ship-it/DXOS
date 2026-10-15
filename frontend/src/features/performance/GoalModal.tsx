@@ -1,0 +1,1 @@
+export { GoalModal } from './MucTieuModal';

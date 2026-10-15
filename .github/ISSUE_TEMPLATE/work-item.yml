@@ -1,0 +1,15 @@
+name: Công việc DX-OS
+description: Theo dõi công việc thực tế và người phụ trách
+body:
+  - type: textarea
+    id: objective
+    attributes: { label: Mục tiêu và phạm vi, description: Nêu vấn đề, kết quả cần đạt và phần không thuộc phạm vi. }
+    validations: { required: true }
+  - type: textarea
+    id: acceptance
+    attributes: { label: Tiêu chí nghiệm thu, description: Liệt kê hành vi và bằng chứng kiểm thử. }
+    validations: { required: true }
+  - type: textarea
+    id: security
+    attributes: { label: Ảnh hưởng bảo mật và dữ liệu, description: Tenant/RBAC, migration, secrets và phương án rollback. }
+    validations: { required: true }

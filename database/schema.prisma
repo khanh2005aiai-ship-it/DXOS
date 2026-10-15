@@ -1,0 +1,1163 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String                   @id @default(uuid()) @db.Char(36)
+  email         String                   @unique @db.VarChar(320)
+  displayName   String?                  @map("display_name") @db.VarChar(200)
+  passwordHash  String?                  @map("password_hash") @db.VarChar(255)
+  accountStatus UserAccountStatus        @default(ACTIVE) @map("account_status")
+  lastLoginAt   DateTime?                @map("last_login_at") @db.DateTime(6)
+  createdAt     DateTime                 @default(now()) @map("created_at") @db.DateTime(6)
+  updatedAt     DateTime                 @updatedAt @map("updated_at") @db.DateTime(6)
+  memberships   OrganizationMembership[]
+  authSessions  AuthSession[]
+  auditEvents   AuditEvent[]
+  employees     Employee[]
+  oidcIdentities OidcIdentity[]
+
+  @@map("users")
+}
+
+enum UserAccountStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+// Explicitly provisioned federation mapping. Never auto-link by email or roles.
+model OidcIdentity {
+  id        String @id @default(uuid()) @db.Char(36)
+  userId    String @map("user_id") @db.Char(36)
+  issuer    String @db.VarChar(191)
+  subject   String @db.VarChar(191)
+  createdAt DateTime @default(now()) @map("created_at") @db.DateTime(6)
+  user      User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@unique([issuer, subject])
+  @@index([userId])
+  @@map("oidc_identities")
+}
+
+model OidcLoginAttempt {
+  stateHash String @id @map("state_hash") @db.Char(64)
+  expiresAt DateTime @map("expires_at") @db.DateTime(6)
+
+  @@index([expiresAt])
+  @@map("oidc_login_attempts")
+}
+
+model AuthSession {
+  id               String   @id @default(uuid()) @db.Char(36)
+  userId           String   @map("user_id") @db.Char(36)
+  refreshTokenHash String   @unique @map("refresh_token_hash") @db.Char(64)
+  expiresAt        DateTime @map("expires_at") @db.DateTime(6)
+  revokedAt        DateTime? @map("revoked_at") @db.DateTime(6)
+  createdAt        DateTime @default(now()) @map("created_at") @db.DateTime(6)
+  updatedAt        DateTime @updatedAt @map("updated_at") @db.DateTime(6)
+  user             User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([userId, expiresAt])
+  @@index([expiresAt])
+  @@map("auth_sessions")
+}
+
+model Organization {
+  id          String                   @id @default(uuid()) @db.Char(36)
+  slug        String                   @unique @db.VarChar(63)
+  name        String                   @db.VarChar(200)
+  status      OrganizationStatus       @default(ACTIVE)
+  createdAt   DateTime                 @default(now()) @map("created_at") @db.DateTime(6)
+  updatedAt   DateTime                 @updatedAt @map("updated_at") @db.DateTime(6)
+  memberships OrganizationMembership[]
+  departments Department[]
+  roles       Role[]
+  auditEvents AuditEvent[]
+  employees   Employee[]
+  tasks       Task[]
+  leaveRequests LeaveRequest[]
+  attendanceRecords AttendanceRecord[]
+  shifts Shift[]
+  workSchedules WorkSchedule[]
+  approvalRequests ApprovalRequest[]
+  compensationProfiles CompensationProfile[]
+  payrollPeriods PayrollPeriod[]
+  payrollRecords PayrollRecord[]
+  performanceReviewCycles PerformanceReviewCycle[]
+  performanceGoals        PerformanceGoal[]
+  performanceKpis         PerformanceKpi[]
+  performanceReviews      PerformanceReview[]
+  employeeDocuments       EmployeeDocument[]
+  documentRequirements    DocumentRequirement[]
+  automationRules         AutomationRule[]
+  automationExecutions    AutomationExecution[]
+  workflowDefinitions     WorkflowDefinition[]
+  workflowInstances       WorkflowInstance[]
+  workflowStepExecutions  WorkflowStepExecution[]
+
+  @@map("organizations")
+}
+
+enum OrganizationStatus {
+  ACTIVE
+  SUSPENDED
+  ARCHIVED
+}
+
+model OrganizationMembership {
+  id             String       @id @default(uuid()) @db.Char(36)
+  organizationId String       @map("organization_id") @db.Char(36)
+  userId         String       @map("user_id") @db.Char(36)
+  status         MembershipStatus @default(ACTIVE)
+  createdAt      DateTime     @default(now()) @map("created_at") @db.DateTime(6)
+  updatedAt      DateTime     @updatedAt @map("updated_at") @db.DateTime(6)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Restrict)
+  roleAssignments MembershipRole[] @relation("MembershipRoleMembership")
+  notifications Notification[]
+  files FileObject[]
+  aiRequests AiRequest[]
+  employee Employee?
+  taskComments TaskComment[]
+  taskAttachments TaskAttachment[]
+  calendarEvents CalendarEvent[]
+  createdLeaveRequests LeaveRequest[] @relation("LeaveCreatorMembership")
+  reviewedLeaveRequests LeaveRequest[] @relation("LeaveReviewerMembership")
+
+  @@unique([organizationId, userId])
+  @@unique([organizationId, id])
+  @@index([userId])
+  @@index([userId, status, organizationId])
+  @@index([organizationId, createdAt])
+  @@map("organization_memberships")
+}
+
+enum MembershipStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  REMOVED
+}
+
+model CalendarEvent {
+  id String @id @default(uuid()) @db.Char(36)
+  organizationId String @map("organization_id") @db.Char(36)
+  createdByUserId String @map("created_by_user_id") @db.Char(36)
+  title String @db.VarChar(200)
+  description String? @db.VarChar(4000)
+  kind CalendarEventKind
+  startsAt DateTime @map("starts_at") @db.DateTime(3)
+  endsAt DateTime @map("ends_at") @db.DateTime(3)
+  location String? @db.VarChar(200)
+  status CalendarEventStatus @default(SCHEDULED)
+  createdAt DateTime @default(now()) @map("created_at") @db.DateTime(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.DateTime(3)
+  creatorMembership OrganizationMembership @relation(fields: [organizationId, createdByUserId], references: [organizationId, userId], onDelete: Restrict, onUpdate: Restrict, map: "calendar_creator_membership_fk")
+  leaveRequests LeaveRequest[]
+
+  @@unique([organizationId, id])
+  @@index([organizationId, createdByUserId])
+  @@index([organizationId, startsAt, id], map: "calendar_org_start_idx")
+  @@index([organizationId, endsAt], map: "calendar_org_end_idx")
+  @@map("calendar_events")
+}
+
+enum CalendarEventKind {
+  EVENT
+  MEETING
+}
+
+enum CalendarEventStatus {
+  SCHEDULED
+  CANCELLED
+}
+
+model Department {
+  id                 String       @id @default(uuid()) @db.Char(36)
+  organizationId     String       @map("organization_id") @db.Char(36)
+  parentDepartmentId String?      @map("parent_department_id") @db.Char(36)
+  code               String       @db.VarChar(64)
+  name               String       @db.VarChar(200)
+  description        String?      @db.VarChar(1000)
+  status             DepartmentStatus @default(ACTIVE)
+  createdAt          DateTime     @default(now()) @map("created_at") @db.DateTime(6)
+  updatedAt          DateTime     @updatedAt @map("updated_at") @db.DateTime(6)
+  organization       Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  parent             Department?  @relation("DepartmentHierarchy", fields: [organizationId, parentDepartmentId], references: [organizationId, id], onDelete: Restrict)
+  children           Department[] @relation("DepartmentHierarchy")
+  employees          Employee[]
+  tasks              Task[]
+  documentRequirements DocumentRequirement[]
+
+  @@unique([organizationId, code])
+  @@unique([organizationId, id])
+  @@index([organizationId, parentDepartmentId])
+  @@map("departments")
+}
+
+enum DepartmentStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model Employee {
+  id             String         @id @default(uuid()) @db.Char(36)
+  organizationId String         @map("organization_id") @db.Char(36)
+  userId         String         @map("user_id") @db.Char(36)
+  departmentId   String?        @map("department_id") @db.Char(36)
+  employeeCode   String         @map("employee_code") @db.VarChar(64)
+  displayName    String         @map("display_name") @db.VarChar(200)
+  jobTitle       String?        @map("job_title") @db.VarChar(200)
+  phone          String?        @db.VarChar(16)
+  status         EmployeeStatus @default(ACTIVE)
+  createdAt      DateTime       @default(now()) @map("created_at") @db.DateTime(6)
+  updatedAt      DateTime       @updatedAt @map("updated_at") @db.DateTime(6)
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  user           User           @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  membership     OrganizationMembership @relation(fields: [organizationId, userId], references: [organizationId, userId], onDelete: Restrict, onUpdate: Restrict)
+  department     Department?    @relation(fields: [organizationId, departmentId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  createdTasks   Task[]         @relation("TaskCreator")
+  assignedTasks  Task[]         @relation("TaskAssignee")
+  reviewAssignments TaskReviewer[]
+  leaveRequests LeaveRequest[] @relation("EmployeeLeaveRequests")
+  attendanceRecords AttendanceRecord[] @relation("EmployeeAttendanceRecords")
+  workSchedules WorkSchedule[] @relation("EmployeeWorkSchedules")
+  requesterApprovals ApprovalRequest[] @relation("RequesterApprovals")
+  reviewerApprovals ApprovalRequest[] @relation("ReviewerApprovals")
+  compensationProfiles CompensationProfile[]
+  payrollApprovedPeriods PayrollPeriod[] @relation("PayrollApprovedBy")
+  payrollFinalizedPeriods PayrollPeriod[] @relation("PayrollFinalizedBy")
+  payrollRecords PayrollRecord[]
+  performanceReviews      PerformanceReview[] @relation("PerformanceReviewEmployee")
+  reviewedReviews         PerformanceReview[] @relation("PerformanceReviewReviewer")
+  performanceGoals        PerformanceGoal[]   @relation("PerformanceGoalEmployee")
+  performanceKpis         PerformanceKpi[]    @relation("PerformanceKpiEmployee")
+  documents               EmployeeDocument[]
+
+  @@unique([organizationId, userId])
+  @@unique([organizationId, employeeCode])
+  @@unique([organizationId, id])
+  @@index([userId])
+  @@index([organizationId, departmentId])
+  @@map("employees")
+}
+
+enum EmployeeStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model Task {
+  id                 String       @id @default(uuid()) @db.Char(36)
+  organizationId     String       @map("organization_id") @db.Char(36)
+  creatorEmployeeId  String       @map("creator_employee_id") @db.Char(36)
+  assigneeEmployeeId String?      @map("assignee_employee_id") @db.Char(36)
+  departmentId       String?      @map("department_id") @db.Char(36)
+  title              String       @db.VarChar(200)
+  description        String?      @db.VarChar(10000)
+  status             TaskStatus   @default(TODO)
+  progressPercent    Int          @default(0) @map("progress_percent") @db.UnsignedTinyInt
+  priority           TaskPriority @default(MEDIUM)
+  dueAt              DateTime?    @map("due_at") @db.DateTime(6)
+  createdAt          DateTime     @default(now()) @map("created_at") @db.DateTime(6)
+  updatedAt          DateTime     @updatedAt @map("updated_at") @db.DateTime(6)
+  organization       Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  creator            Employee     @relation("TaskCreator", fields: [organizationId, creatorEmployeeId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  assignee           Employee?    @relation("TaskAssignee", fields: [organizationId, assigneeEmployeeId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  department         Department?  @relation(fields: [organizationId, departmentId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  comments           TaskComment[]
+  attachments        TaskAttachment[]
+  checklist          TaskChecklistItem[]
+  reviewer           TaskReviewer?
+
+  @@unique([organizationId, id])
+  @@index([organizationId, creatorEmployeeId])
+  @@index([organizationId, assigneeEmployeeId, id])
+  @@index([organizationId, departmentId, id])
+  @@index([organizationId, status, id])
+  @@index([organizationId, priority, id])
+  @@map("tasks")
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+  CANCELLED
+}
+
+model TaskChecklistItem {
+  id             String   @id @default(uuid()) @db.Char(36)
+  organizationId String   @map("organization_id") @db.Char(36)
+  taskId         String   @map("task_id") @db.Char(36)
+  title          String   @db.VarChar(200)
+  isCompleted    Boolean  @default(false) @map("is_completed")
+  createdAt      DateTime @default(now()) @map("created_at") @db.DateTime(3)
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.DateTime(3)
+  task           Task     @relation(fields: [organizationId, taskId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([organizationId, taskId, createdAt, id], map: "task_checklist_chronology_idx")
+  @@map("task_checklist_items")
+}
+
+model TaskReviewer {
+  taskId         String   @id @map("task_id") @db.Char(36)
+  organizationId String   @map("organization_id") @db.Char(36)
+  employeeId     String   @map("employee_id") @db.Char(36)
+  createdAt      DateTime @default(now()) @map("created_at") @db.DateTime(3)
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.DateTime(3)
+  task           Task     @relation(fields: [organizationId, taskId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  employee       Employee @relation(fields: [organizationId, employeeId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@unique([organizationId, taskId])
+  @@index([organizationId, employeeId])
+  @@map("task_reviewers")
+}
+
+model TaskComment {
+  id             String   @id @default(uuid()) @db.Char(36)
+  organizationId String   @map("organization_id") @db.Char(36)
+  taskId         String   @map("task_id") @db.Char(36)
+  authorUserId   String   @map("author_user_id") @db.Char(36)
+  body           String   @db.VarChar(4000)
+  createdAt      DateTime @default(now()) @map("created_at") @db.DateTime(3)
+  task           Task     @relation(fields: [organizationId, taskId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  authorMembership OrganizationMembership @relation(fields: [organizationId, authorUserId], references: [organizationId, userId], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([organizationId, taskId, createdAt, id], map: "task_comments_chronology_idx")
+  @@index([organizationId, authorUserId], map: "task_comments_author_idx")
+  @@map("task_comments")
+}
+
+model TaskAttachment {
+  id             String   @id @default(uuid()) @db.Char(36)
+  organizationId String   @map("organization_id") @db.Char(36)
+  taskId         String   @map("task_id") @db.Char(36)
+  fileId         String   @map("file_id") @db.Char(36)
+  linkedByUserId String   @map("linked_by_user_id") @db.Char(36)
+  createdAt      DateTime @default(now()) @map("created_at") @db.DateTime(3)
+  task           Task     @relation(fields: [organizationId, taskId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  file           FileObject @relation(fields: [organizationId, fileId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  linkerMembership OrganizationMembership @relation(fields: [organizationId, linkedByUserId], references: [organizationId, userId], onDelete: Restrict, onUpdate: Restrict)
+
+  @@unique([organizationId, taskId, fileId], map: "task_attachments_task_file_key")
+  @@index([organizationId, taskId, createdAt, id], map: "task_attachments_chronology_idx")
+  @@index([organizationId, fileId], map: "task_attachments_file_idx")
+  @@index([organizationId, linkedByUserId], map: "task_attachments_linker_idx")
+  @@map("task_attachments")
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model Role {
+  id             String       @id @default(uuid()) @db.Char(36)
+  organizationId String       @map("organization_id") @db.Char(36)
+  key            String       @db.VarChar(100)
+  name           String       @db.VarChar(150)
+  description    String?      @db.VarChar(500)
+  isActive       Boolean      @default(true) @map("is_active")
+  createdAt      DateTime     @default(now()) @map("created_at") @db.DateTime(6)
+  updatedAt      DateTime     @updatedAt @map("updated_at") @db.DateTime(6)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  permissionAssignments RolePermission[]
+  membershipAssignments MembershipRole[] @relation("MembershipRoleRole")
+
+  @@unique([organizationId, key])
+  @@unique([organizationId, id])
+  @@map("roles")
+}
+
+model Permission {
+  id          String   @id @default(uuid()) @db.Char(36)
+  key         String   @unique @db.VarChar(150)
+  name        String   @db.VarChar(150)
+  description String?  @db.VarChar(500)
+  createdAt   DateTime @default(now()) @map("created_at") @db.DateTime(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.DateTime(6)
+  roleAssignments RolePermission[]
+
+  @@map("permissions")
+}
+
+model RolePermission {
+  id           String     @id @default(uuid()) @db.Char(36)
+  roleId       String     @map("role_id") @db.Char(36)
+  permissionId String     @map("permission_id") @db.Char(36)
+  createdAt    DateTime   @default(now()) @map("created_at") @db.DateTime(6)
+  updatedAt    DateTime   @updatedAt @map("updated_at") @db.DateTime(6)
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Restrict)
+
+  @@unique([roleId, permissionId])
+  @@index([permissionId])
+  @@map("role_permissions")
+}
+
+model MembershipRole {
+  id             String                 @id @default(uuid()) @db.Char(36)
+  organizationId String                 @map("organization_id") @db.Char(36)
+  membershipId   String                 @map("membership_id") @db.Char(36)
+  roleId         String                 @map("role_id") @db.Char(36)
+  createdAt      DateTime               @default(now()) @map("created_at") @db.DateTime(6)
+  updatedAt      DateTime               @updatedAt @map("updated_at") @db.DateTime(6)
+  membership     OrganizationMembership @relation("MembershipRoleMembership", fields: [organizationId, membershipId], references: [organizationId, id], onDelete: Restrict)
+  role           Role                   @relation("MembershipRoleRole", fields: [organizationId, roleId], references: [organizationId, id], onDelete: Restrict)
+
+  @@unique([membershipId, roleId])
+  @@index([organizationId, membershipId])
+  @@index([organizationId, roleId])
+  @@map("membership_roles")
+}
+
+model AuditEvent {
+  id             String        @id @default(uuid()) @db.Char(36)
+  organizationId String?       @map("organization_id") @db.Char(36)
+  actorUserId    String?       @map("actor_user_id") @db.Char(36)
+  event          String        @db.VarChar(100)
+  resourceType   String        @map("resource_type") @db.VarChar(40)
+  resourceId     String?       @map("resource_id") @db.Char(36)
+  outcome        AuditOutcome
+  source         AuditSource
+  requestId      String?       @map("request_id") @db.VarChar(128)
+  metadata       Json
+  createdAt      DateTime      @default(now()) @map("created_at") @db.DateTime(6)
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  actor          User?         @relation(fields: [actorUserId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([organizationId, createdAt, id])
+  @@index([organizationId, event, createdAt, id])
+  @@index([actorUserId])
+  @@map("audit_events")
+}
+
+enum AuditOutcome {
+  SUCCESS
+  FAILURE
+  DENIED
+}
+
+enum AuditSource {
+  HTTP
+  SYSTEM
+}
+
+model Notification {
+  id String @id @default(uuid()) @db.Char(36)
+  organizationId String @map("organization_id") @db.Char(36)
+  recipientUserId String @map("recipient_user_id") @db.Char(36)
+  type String @db.VarChar(100)
+  title String @db.VarChar(200)
+  body String @db.VarChar(1000)
+  metadata Json
+  createdAt DateTime @default(now()) @map("created_at") @db.DateTime(6)
+  readAt DateTime? @map("read_at") @db.DateTime(6)
+  recipientMembership OrganizationMembership @relation(fields: [organizationId, recipientUserId], references: [organizationId, userId], onDelete: Restrict, onUpdate: Restrict, map: "notifications_recipient_membership_fkey")
+
+  @@index([organizationId, recipientUserId, createdAt, id], map: "notifications_recipient_chronology_idx")
+  @@index([organizationId, recipientUserId, readAt, createdAt, id], map: "notifications_recipient_read_chronology_idx")
+  @@map("notifications")
+}
+
+model FileObject {
+  id String @id @default(uuid()) @db.Char(36)
+  organizationId String @map("organization_id") @db.Char(36)
+  uploadedByUserId String @map("uploaded_by_user_id") @db.Char(36)
+  originalFilename String @map("original_filename") @db.VarChar(200)
+  contentType String @map("content_type") @db.VarChar(100)
+  size Int? @db.UnsignedInt
+  checksum String? @db.Char(64)
+  storageProvider String @default("LOCAL") @map("storage_provider") @db.VarChar(32)
+  storageKey String @unique @map("storage_key") @db.Char(36)
+  status FileStatus @default(UPLOADING)
+  createdAt DateTime @default(now()) @map("created_at") @db.DateTime(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.DateTime(6)
+  uploaderMembership OrganizationMembership @relation(fields: [organizationId, uploadedByUserId], references: [organizationId, userId], onDelete: Restrict, onUpdate: Restrict, map: "file_objects_uploader_membership_fkey")
+  taskAttachments TaskAttachment[]
+  documentVersions DocumentVersion[]
+
+  @@unique([organizationId, id])
+  @@index([organizationId, uploadedByUserId], map: "file_objects_uploader_membership_idx")
+  @@map("file_objects")
+}
+
+enum FileStatus {
+  UPLOADING
+  AVAILABLE
+  FAILED
+  DELETED
+}
+
+model AiRequest {
+  id String @id @default(uuid()) @db.Char(36)
+  organizationId String @map("organization_id") @db.Char(36)
+  userId String @map("user_id") @db.Char(36)
+  provider String @db.VarChar(32)
+  model String @db.VarChar(100)
+  status AiRequestStatus @default(STARTED)
+  requestId String @map("request_id") @db.VarChar(128)
+  inputTokens Int? @map("input_tokens") @db.UnsignedInt
+  outputTokens Int? @map("output_tokens") @db.UnsignedInt
+  latencyMs Int? @map("latency_ms") @db.UnsignedInt
+  errorCategory String? @map("error_category") @db.VarChar(40)
+  createdAt DateTime @default(now()) @map("created_at") @db.DateTime(6)
+  completedAt DateTime? @map("completed_at") @db.DateTime(6)
+  membership OrganizationMembership @relation(fields: [organizationId, userId], references: [organizationId, userId], onDelete: Restrict, onUpdate: Restrict, map: "ai_requests_membership_fkey")
+
+  @@index([organizationId, userId], map: "ai_requests_membership_idx")
+  @@index([organizationId, status, createdAt], map: "ai_requests_status_idx")
+  @@map("ai_requests")
+}
+
+enum AiRequestStatus {
+  STARTED
+  SUCCEEDED
+  FAILED
+}
+
+model LeaveRequest {
+  id              String             @id @default(uuid()) @db.Char(36)
+  organizationId  String             @map("organization_id") @db.Char(36)
+  employeeId      String             @map("employee_id") @db.Char(36)
+  createdByUserId String             @map("created_by_user_id") @db.Char(36)
+  leaveType       LeaveType          @map("leave_type")
+  startsAt        DateTime           @map("starts_at") @db.DateTime(3)
+  endsAt          DateTime           @map("ends_at") @db.DateTime(3)
+  daysCount       Float              @map("days_count") @db.Double
+  reason          String             @db.VarChar(500)
+  status          LeaveStatus        @default(PENDING)
+  reviewerUserId  String?            @map("reviewer_user_id") @db.Char(36)
+  reviewerNote    String?            @map("reviewer_note") @db.VarChar(500)
+  reviewedAt      DateTime?          @map("reviewed_at") @db.DateTime(3)
+  calendarEventId String?            @map("calendar_event_id") @db.Char(36)
+  createdAt       DateTime           @default(now()) @map("created_at") @db.DateTime(3)
+  updatedAt       DateTime           @updatedAt @map("updated_at") @db.DateTime(3)
+
+  organization       Organization           @relation(fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "leave_requests_organization_id_fkey")
+  employee           Employee               @relation("EmployeeLeaveRequests", fields: [organizationId, employeeId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict, map: "leave_requests_org_employee_fkey")
+  creatorMembership  OrganizationMembership @relation("LeaveCreatorMembership", fields: [organizationId, createdByUserId], references: [organizationId, userId], onDelete: Restrict, onUpdate: Restrict, map: "leave_requests_creator_membership_fkey")
+  reviewerMembership OrganizationMembership? @relation("LeaveReviewerMembership", fields: [organizationId, reviewerUserId], references: [organizationId, userId], onDelete: Restrict, onUpdate: Restrict, map: "leave_requests_reviewer_membership_fkey")
+  calendarEvent      CalendarEvent?         @relation(fields: [organizationId, calendarEventId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict, map: "leave_requests_calendar_event_fkey")
+
+  @@unique([organizationId, id])
+  @@index([organizationId, employeeId, status], map: "leave_requests_org_emp_status_idx")
+  @@index([organizationId, status, createdAt], map: "leave_requests_org_status_created_idx")
+  @@index([organizationId, startsAt, endsAt], map: "leave_requests_org_time_idx")
+  @@map("leave_requests")
+}
+
+enum LeaveType {
+  ANNUAL
+  SICK
+  PERSONAL
+  UNPAID
+  OTHER
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+model AttendanceRecord {
+  id                String           @id @default(uuid()) @db.Char(36)
+  organizationId    String           @map("organization_id") @db.Char(36)
+  employeeId        String           @map("employee_id") @db.Char(36)
+  shiftId           String?          @map("shift_id") @db.Char(36)
+  workDate          DateTime         @map("work_date") @db.Date
+  checkInAt         DateTime         @map("check_in_at") @db.DateTime(3)
+  checkOutAt        DateTime?        @map("check_out_at") @db.DateTime(3)
+  status            AttendanceStatus @default(PRESENT)
+  lateMinutes       Int              @default(0) @map("late_minutes")
+  earlyLeaveMinutes Int              @default(0) @map("early_leave_minutes")
+  workedMinutes     Int?             @map("worked_minutes")
+  note              String?          @db.VarChar(500)
+  createdAt         DateTime         @default(now()) @map("created_at") @db.DateTime(3)
+  updatedAt         DateTime         @updatedAt @map("updated_at") @db.DateTime(3)
+
+  organization      Organization     @relation(fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "attendance_records_organization_id_fkey")
+  employee          Employee         @relation("EmployeeAttendanceRecords", fields: [organizationId, employeeId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict, map: "attendance_records_org_employee_fkey")
+  shift             Shift?           @relation(fields: [shiftId], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "attendance_records_shift_id_fkey")
+
+  @@unique([organizationId, employeeId, workDate], map: "attendance_records_org_emp_date_unique")
+  @@unique([organizationId, id], map: "attendance_records_org_id_unique")
+  @@index([organizationId, workDate], map: "attendance_records_org_date_idx")
+  @@index([organizationId, status], map: "attendance_records_org_status_idx")
+  @@index([organizationId, shiftId], map: "attendance_records_org_shift_idx")
+  @@index([shiftId], map: "attendance_records_shift_idx")
+  @@map("attendance_records")
+}
+
+enum AttendanceStatus {
+  PRESENT
+  LATE
+  ABSENT
+  ON_LEAVE
+  INCOMPLETE
+}
+
+model Shift {
+  id                 String             @id @default(uuid()) @db.Char(36)
+  organizationId     String             @map("organization_id") @db.Char(36)
+  name               String             @db.VarChar(100)
+  code               String             @db.VarChar(50)
+  startTime          String             @map("start_time") @db.VarChar(8)
+  endTime            String             @map("end_time") @db.VarChar(8)
+  breakStart         String?            @map("break_start") @db.VarChar(8)
+  breakEnd           String?            @map("break_end") @db.VarChar(8)
+  gracePeriodMinutes Int                @default(0) @map("grace_period_minutes")
+  isOvernight        Boolean            @default(false) @map("is_overnight")
+  isActive           Boolean            @default(true) @map("is_active")
+  description        String?            @db.VarChar(500)
+  createdAt          DateTime           @default(now()) @map("created_at") @db.DateTime(3)
+  updatedAt          DateTime           @updatedAt @map("updated_at") @db.DateTime(3)
+
+  organization       Organization       @relation(fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "shifts_organization_id_fkey")
+  workSchedules      WorkSchedule[]
+  attendanceRecords  AttendanceRecord[]
+
+  @@unique([organizationId, code], map: "shifts_org_code_unique")
+  @@unique([organizationId, id], map: "shifts_org_id_unique")
+  @@index([organizationId, isActive], map: "shifts_org_active_idx")
+  @@map("shifts")
+}
+
+model WorkSchedule {
+  id             String         @id @default(uuid()) @db.Char(36)
+  organizationId String         @map("organization_id") @db.Char(36)
+  employeeId     String         @map("employee_id") @db.Char(36)
+  shiftId        String?        @map("shift_id") @db.Char(36)
+  workDate       DateTime       @map("work_date") @db.Date
+  isOff          Boolean        @default(false) @map("is_off")
+  notes          String?        @db.VarChar(500)
+  createdAt      DateTime       @default(now()) @map("created_at") @db.DateTime(3)
+  updatedAt      DateTime       @updatedAt @map("updated_at") @db.DateTime(3)
+
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "work_schedules_organization_id_fkey")
+  employee       Employee       @relation("EmployeeWorkSchedules", fields: [organizationId, employeeId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict, map: "work_schedules_org_employee_fkey")
+  shift          Shift?         @relation(fields: [organizationId, shiftId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict, map: "work_schedules_shift_id_fkey")
+
+  @@unique([organizationId, employeeId, workDate], map: "work_schedules_org_emp_date_unique")
+  @@unique([organizationId, id], map: "work_schedules_org_id_unique")
+  @@index([organizationId, workDate], map: "work_schedules_org_date_idx")
+  @@index([organizationId, shiftId], map: "work_schedules_org_shift_idx")
+  @@map("work_schedules")
+}
+
+model ApprovalRequest {
+  id              String               @id @default(uuid()) @db.Char(36)
+  organizationId  String               @map("organization_id") @db.Char(36)
+  requesterId     String               @map("requester_id") @db.Char(36)
+  type            ApprovalRequestType
+  status          ApprovalStatus       @default(PENDING)
+  title           String               @db.VarChar(255)
+  reason          String               @db.VarChar(1000)
+  payload         Json
+  reviewerId      String?              @map("reviewer_id") @db.Char(36)
+  reviewerNote    String?              @map("reviewer_note") @db.VarChar(1000)
+  reviewedAt      DateTime?            @map("reviewed_at") @db.DateTime(3)
+  referenceId     String?              @map("reference_id") @db.Char(36)
+  createdAt       DateTime             @default(now()) @map("created_at") @db.DateTime(3)
+  updatedAt       DateTime             @updatedAt @map("updated_at") @db.DateTime(3)
+
+  organization    Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "approval_requests_organization_id_fkey")
+  requester       Employee             @relation("RequesterApprovals", fields: [organizationId, requesterId], references: [organizationId, id], onDelete: Cascade, onUpdate: Restrict, map: "approval_requests_requester_fkey")
+  reviewer        Employee?            @relation("ReviewerApprovals", fields: [reviewerId], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "approval_requests_reviewer_fkey")
+
+  @@unique([organizationId, id], map: "approval_requests_org_id_unique")
+  @@index([organizationId, status, createdAt], map: "approval_requests_org_status_created_idx")
+  @@index([organizationId, requesterId, status], map: "approval_requests_org_requester_status_idx")
+  @@index([organizationId, type, status], map: "approval_requests_org_type_status_idx")
+  @@index([organizationId, referenceId], map: "approval_requests_org_ref_idx")
+  @@index([organizationId, type, referenceId], map: "approval_requests_org_type_ref_idx")
+  @@map("approval_requests")
+}
+
+enum ApprovalRequestType {
+  LEAVE
+  ATTENDANCE_ADJUSTMENT
+  PAYROLL
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum PayrollPeriodStatus {
+  DRAFT
+  PROCESSING
+  CALCULATED
+  PENDING_APPROVAL
+  APPROVED
+  FINALIZED
+  CANCELLED
+}
+
+enum PayrollItemType {
+  EARNING
+  ALLOWANCE
+  OVERTIME
+  DEDUCTION
+  BONUS
+  OTHER
+}
+
+model CompensationProfile {
+  id             String       @id @default(uuid()) @db.Char(36)
+  organizationId String       @map("organization_id") @db.Char(36)
+  employeeId     String       @map("employee_id") @db.Char(36)
+  baseSalary     Decimal      @map("base_salary") @db.Decimal(15, 2)
+  currency       String       @default("VND") @db.VarChar(10)
+  effectiveFrom  DateTime     @map("effective_from") @db.Date
+  effectiveTo    DateTime?    @map("effective_to") @db.Date
+  isActive       Boolean      @default(true) @map("is_active")
+  notes          String?      @db.VarChar(500)
+  createdAt      DateTime     @default(now()) @map("created_at") @db.DateTime(3)
+  updatedAt      DateTime     @updatedAt @map("updated_at") @db.DateTime(3)
+
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "compensation_profiles_organization_id_fkey")
+  employee       Employee     @relation(fields: [organizationId, employeeId], references: [organizationId, id], onDelete: Cascade, onUpdate: Restrict, map: "compensation_profiles_org_employee_fkey")
+  payrollRecords PayrollRecord[]
+
+  @@unique([organizationId, id], map: "compensation_profiles_org_id_unique")
+  @@index([organizationId, employeeId, isActive], map: "compensation_profiles_org_emp_active_idx")
+  @@index([organizationId, effectiveFrom, effectiveTo], map: "compensation_profiles_org_effective_idx")
+  @@map("compensation_profiles")
+}
+
+model PayrollPeriod {
+  id            String              @id @default(uuid()) @db.Char(36)
+  organizationId String             @map("organization_id") @db.Char(36)
+  name          String              @db.VarChar(100)
+  periodStart   DateTime            @map("period_start") @db.Date
+  periodEnd     DateTime            @map("period_end") @db.Date
+  status        PayrollPeriodStatus @default(DRAFT)
+  totalGross    Decimal             @default(0) @map("total_gross") @db.Decimal(15, 2)
+  totalNet      Decimal             @default(0) @map("total_net") @db.Decimal(15, 2)
+  employeeCount Int                 @default(0) @map("employee_count")
+  calculatedAt  DateTime?           @map("calculated_at") @db.DateTime(3)
+  approvedAt    DateTime?           @map("approved_at") @db.DateTime(3)
+  approvedById  String?             @map("approved_by_id") @db.Char(36)
+  finalizedAt   DateTime?           @map("finalized_at") @db.DateTime(3)
+  finalizedById String?             @map("finalized_by_id") @db.Char(36)
+  createdAt     DateTime            @default(now()) @map("created_at") @db.DateTime(3)
+  updatedAt     DateTime            @updatedAt @map("updated_at") @db.DateTime(3)
+
+  organization  Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "payroll_periods_organization_id_fkey")
+  approvedBy    Employee?           @relation("PayrollApprovedBy", fields: [approvedById], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "payroll_periods_approved_by_fkey")
+  finalizedBy   Employee?           @relation("PayrollFinalizedBy", fields: [finalizedById], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "payroll_periods_finalized_by_fkey")
+  records       PayrollRecord[]
+
+  @@unique([organizationId, name], map: "payroll_periods_org_name_unique")
+  @@unique([organizationId, id], map: "payroll_periods_org_id_unique")
+  @@index([organizationId, status], map: "payroll_periods_org_status_idx")
+  @@index([organizationId, periodStart, periodEnd], map: "payroll_periods_org_period_idx")
+  @@map("payroll_periods")
+}
+
+model PayrollRecord {
+  id                    String              @id @default(uuid()) @db.Char(36)
+  organizationId        String              @map("organization_id") @db.Char(36)
+  payrollPeriodId       String              @map("payroll_period_id") @db.Char(36)
+  employeeId            String              @map("employee_id") @db.Char(36)
+  compensationProfileId String?             @map("compensation_profile_id") @db.Char(36)
+  baseSalary            Decimal             @map("base_salary") @db.Decimal(15, 2)
+  workingDays           Decimal             @map("working_days") @db.Decimal(5, 2)
+  workedDays            Decimal             @map("worked_days") @db.Decimal(5, 2)
+  absentDays            Decimal             @map("absent_days") @db.Decimal(5, 2)
+  paidLeaveDays         Decimal             @map("paid_leave_days") @db.Decimal(5, 2)
+  unpaidLeaveDays       Decimal             @map("unpaid_leave_days") @db.Decimal(5, 2)
+  overtimeMinutes       Int                 @default(0) @map("overtime_minutes")
+  overtimeAmount        Decimal             @default(0) @map("overtime_amount") @db.Decimal(15, 2)
+  allowanceAmount       Decimal             @default(0) @map("allowance_amount") @db.Decimal(15, 2)
+  deductionAmount       Decimal             @default(0) @map("deduction_amount") @db.Decimal(15, 2)
+  grossAmount           Decimal             @map("gross_amount") @db.Decimal(15, 2)
+  netAmount             Decimal             @map("net_amount") @db.Decimal(15, 2)
+  currency              String              @default("VND") @db.VarChar(10)
+  calculatedAt          DateTime            @default(now()) @map("calculated_at") @db.DateTime(3)
+  createdAt             DateTime            @default(now()) @map("created_at") @db.DateTime(3)
+  updatedAt             DateTime            @updatedAt @map("updated_at") @db.DateTime(3)
+
+  organization          Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "payroll_records_organization_id_fkey")
+  payrollPeriod         PayrollPeriod       @relation(fields: [payrollPeriodId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "payroll_records_period_fkey")
+  employee              Employee            @relation(fields: [employeeId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "payroll_records_employee_fkey")
+  compensationProfile   CompensationProfile? @relation(fields: [compensationProfileId], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "payroll_records_compensation_profile_fkey")
+  items                 PayrollItem[]
+
+  @@unique([payrollPeriodId, employeeId], map: "payroll_records_period_employee_unique")
+  @@unique([organizationId, id], map: "payroll_records_org_id_unique")
+  @@index([organizationId, employeeId], map: "payroll_records_org_employee_idx")
+  @@index([organizationId, payrollPeriodId], map: "payroll_records_org_period_idx")
+  @@map("payroll_records")
+}
+
+model PayrollItem {
+  id              String          @id @default(uuid()) @db.Char(36)
+  payrollRecordId String          @map("payroll_record_id") @db.Char(36)
+  type            PayrollItemType
+  name            String          @db.VarChar(150)
+  amount          Decimal         @db.Decimal(15, 2)
+  quantity        Decimal?        @db.Decimal(10, 2)
+  unit            String?         @db.VarChar(50)
+  notes           String?         @db.VarChar(500)
+  createdAt       DateTime        @default(now()) @map("created_at") @db.DateTime(3)
+
+  payrollRecord   PayrollRecord   @relation(fields: [payrollRecordId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "payroll_items_payroll_record_id_fkey")
+
+  @@index([payrollRecordId], map: "payroll_items_record_idx")
+  @@map("payroll_items")
+}
+
+enum PerformanceCycleStatus {
+  DRAFT
+  OPEN
+  IN_REVIEW
+  COMPLETED
+  CANCELLED
+}
+
+enum PerformanceReviewStatus {
+  DRAFT
+  SELF_ASSESSMENT
+  MANAGER_REVIEW
+  COMPLETED
+  CANCELLED
+}
+
+enum PerformanceGoalStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model PerformanceReviewCycle {
+  id             String                 @id @default(uuid()) @db.Char(36)
+  organizationId String                 @map("organization_id") @db.Char(36)
+  name           String                 @db.VarChar(150)
+  startDate      DateTime               @map("start_date") @db.Date
+  endDate        DateTime               @map("end_date") @db.Date
+  status         PerformanceCycleStatus @default(DRAFT)
+  description    String?                @db.VarChar(1000)
+  createdAt      DateTime               @default(now()) @map("created_at") @db.DateTime(3)
+  updatedAt      DateTime               @updatedAt @map("updated_at") @db.DateTime(3)
+
+  organization   Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "perf_cycles_org_fkey")
+  reviews        PerformanceReview[]
+  goals          PerformanceGoal[]
+  kpis           PerformanceKpi[]
+
+  @@unique([organizationId, name], map: "perf_cycles_org_name_unique")
+  @@unique([organizationId, id], map: "perf_cycles_org_id_unique")
+  @@index([organizationId, status], map: "perf_cycles_org_status_idx")
+  @@index([organizationId, startDate, endDate], map: "perf_cycles_org_dates_idx")
+  @@map("performance_review_cycles")
+}
+
+model PerformanceGoal {
+  id             String                @id @default(uuid()) @db.Char(36)
+  organizationId String                @map("organization_id") @db.Char(36)
+  cycleId        String                @map("cycle_id") @db.Char(36)
+  employeeId     String                @map("employee_id") @db.Char(36)
+  title          String                @db.VarChar(200)
+  description    String?               @db.VarChar(1000)
+  weight         Decimal               @default(0) @db.Decimal(5, 2)
+  progress       Decimal               @default(0) @db.Decimal(5, 2)
+  status         PerformanceGoalStatus @default(NOT_STARTED)
+  createdAt      DateTime              @default(now()) @map("created_at") @db.DateTime(3)
+  updatedAt      DateTime              @updatedAt @map("updated_at") @db.DateTime(3)
+
+  organization   Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "perf_goals_org_fkey")
+  cycle          PerformanceReviewCycle @relation(fields: [cycleId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "perf_goals_cycle_fkey")
+  employee       Employee               @relation("PerformanceGoalEmployee", fields: [organizationId, employeeId], references: [organizationId, id], onDelete: Cascade, onUpdate: Restrict, map: "perf_goals_org_emp_fkey")
+
+  @@unique([organizationId, id], map: "perf_goals_org_id_unique")
+  @@index([organizationId, cycleId, employeeId], map: "perf_goals_org_cycle_emp_idx")
+  @@index([organizationId, employeeId], map: "perf_goals_org_emp_idx")
+  @@map("performance_goals")
+}
+
+model PerformanceKpi {
+  id             String                 @id @default(uuid()) @db.Char(36)
+  organizationId String                 @map("organization_id") @db.Char(36)
+  cycleId        String                 @map("cycle_id") @db.Char(36)
+  employeeId     String                 @map("employee_id") @db.Char(36)
+  name           String                 @db.VarChar(200)
+  targetValue    Decimal                @map("target_value") @db.Decimal(15, 2)
+  actualValue    Decimal                @default(0) @map("actual_value") @db.Decimal(15, 2)
+  unit           String                 @db.VarChar(50)
+  score          Decimal                @default(0) @db.Decimal(5, 2)
+  createdAt      DateTime               @default(now()) @map("created_at") @db.DateTime(3)
+  updatedAt      DateTime               @updatedAt @map("updated_at") @db.DateTime(3)
+
+  organization   Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "perf_kpis_org_fkey")
+  cycle          PerformanceReviewCycle @relation(fields: [cycleId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "perf_kpis_cycle_fkey")
+  employee       Employee               @relation("PerformanceKpiEmployee", fields: [organizationId, employeeId], references: [organizationId, id], onDelete: Cascade, onUpdate: Restrict, map: "perf_kpis_org_emp_fkey")
+
+  @@unique([organizationId, id], map: "perf_kpis_org_id_unique")
+  @@index([organizationId, cycleId, employeeId], map: "perf_kpis_org_cycle_emp_idx")
+  @@index([organizationId, employeeId], map: "perf_kpis_org_emp_idx")
+  @@map("performance_kpis")
+}
+
+model PerformanceReview {
+  id                   String                  @id @default(uuid()) @db.Char(36)
+  organizationId       String                  @map("organization_id") @db.Char(36)
+  cycleId              String                  @map("cycle_id") @db.Char(36)
+  employeeId           String                  @map("employee_id") @db.Char(36)
+  reviewerId           String                  @map("reviewer_id") @db.Char(36)
+  status               PerformanceReviewStatus @default(DRAFT)
+  selfAssessment       String?                 @map("self_assessment") @db.Text
+  selfRating           Int?                    @map("self_rating")
+  selfSubmittedAt      DateTime?               @map("self_submitted_at") @db.DateTime(3)
+  managerReview        String?                 @map("manager_review") @db.Text
+  managerRating        Int?                    @map("manager_rating")
+  managerSubmittedAt   DateTime?               @map("manager_submitted_at") @db.DateTime(3)
+  finalRating          Int?                    @map("final_rating")
+  summaryFeedback      String?                 @map("summary_feedback") @db.Text
+  completedAt          DateTime?               @map("completed_at") @db.DateTime(3)
+  snapshotData         Json?                   @map("snapshot_data")
+  createdAt            DateTime                @default(now()) @map("created_at") @db.DateTime(3)
+  updatedAt            DateTime                @updatedAt @map("updated_at") @db.DateTime(3)
+
+  organization         Organization            @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "perf_reviews_org_fkey")
+  cycle                PerformanceReviewCycle  @relation(fields: [cycleId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "perf_reviews_cycle_fkey")
+  employee             Employee                @relation("PerformanceReviewEmployee", fields: [organizationId, employeeId], references: [organizationId, id], onDelete: Cascade, onUpdate: Restrict, map: "perf_reviews_org_emp_fkey")
+  reviewer             Employee                @relation("PerformanceReviewReviewer", fields: [reviewerId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "perf_reviews_reviewer_fkey")
+
+  @@unique([cycleId, employeeId], map: "perf_reviews_cycle_emp_unique")
+  @@unique([organizationId, id], map: "perf_reviews_org_id_unique")
+  @@index([organizationId, employeeId, status], map: "perf_reviews_org_emp_status_idx")
+  @@index([organizationId, reviewerId, status], map: "perf_reviews_org_rev_status_idx")
+  @@index([organizationId, cycleId, status], map: "perf_reviews_org_cycle_status_idx")
+  @@map("performance_reviews")
+}
+
+enum DocumentCategory {
+  LABOR_CONTRACT
+  IDENTIFICATION
+  CERTIFICATE
+  TRAINING
+  INSURANCE
+  DECISION
+  HR_RECORD
+  OTHER
+}
+
+enum DocumentSensitivity {
+  NORMAL
+  SENSITIVE
+}
+
+enum DocumentStatus {
+  ACTIVE
+  ARCHIVED
+  EXPIRED
+}
+
+model EmployeeDocument {
+  id             String              @id @default(uuid()) @db.Char(36)
+  organizationId String              @map("organization_id") @db.Char(36)
+  employeeId     String              @map("employee_id") @db.Char(36)
+  title          String              @db.VarChar(200)
+  documentNumber String?             @map("document_number") @db.VarChar(100)
+  category       DocumentCategory    @default(OTHER)
+  sensitivity    DocumentSensitivity @default(NORMAL)
+  status         DocumentStatus      @default(ACTIVE)
+  issueDate      DateTime?           @map("issue_date") @db.Date
+  expiryDate     DateTime?           @map("expiry_date") @db.Date
+  notes          String?             @db.VarChar(2000)
+  deletedAt      DateTime?           @map("deleted_at") @db.DateTime(3)
+  createdAt      DateTime            @default(now()) @map("created_at") @db.DateTime(3)
+  updatedAt      DateTime            @updatedAt @map("updated_at") @db.DateTime(3)
+
+  organization   Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "emp_docs_org_fkey")
+  employee       Employee            @relation(fields: [organizationId, employeeId], references: [organizationId, id], onDelete: Cascade, onUpdate: Restrict, map: "emp_docs_org_emp_fkey")
+  versions       DocumentVersion[]
+
+  @@unique([organizationId, id], map: "emp_docs_org_id_unique")
+  @@index([organizationId, employeeId], map: "emp_docs_org_emp_idx")
+  @@index([organizationId, category], map: "emp_docs_org_cat_idx")
+  @@index([organizationId, status], map: "emp_docs_org_status_idx")
+  @@index([organizationId, expiryDate], map: "emp_docs_org_expiry_idx")
+  @@map("employee_documents")
+}
+
+model DocumentVersion {
+  id               String           @id @default(uuid()) @db.Char(36)
+  organizationId   String           @map("organization_id") @db.Char(36)
+  documentId       String           @map("document_id") @db.Char(36)
+  versionNumber    Int              @map("version_number") @db.UnsignedInt
+  fileId           String           @map("file_id") @db.Char(36)
+  fileName         String           @map("file_name") @db.VarChar(255)
+  fileSize         Int              @map("file_size") @db.UnsignedInt
+  contentType      String           @map("content_type") @db.VarChar(100)
+  checksum         String?          @db.Char(64)
+  changeSummary    String?          @map("change_summary") @db.VarChar(1000)
+  uploadedByUserId String           @map("uploaded_by_user_id") @db.Char(36)
+  createdAt        DateTime         @default(now()) @map("created_at") @db.DateTime(3)
+
+  document         EmployeeDocument @relation(fields: [organizationId, documentId], references: [organizationId, id], onDelete: Cascade, onUpdate: Restrict, map: "doc_versions_org_doc_fkey")
+  file             FileObject       @relation(fields: [organizationId, fileId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict, map: "doc_versions_org_file_fkey")
+
+  @@unique([organizationId, id], map: "doc_versions_org_id_unique")
+  @@unique([documentId, versionNumber], map: "doc_versions_doc_version_unique")
+  @@index([organizationId, documentId], map: "doc_versions_org_doc_idx")
+  @@index([organizationId, fileId], map: "doc_versions_org_file_idx")
+  @@map("document_versions")
+}
+
+model DocumentRequirement {
+  id                     String           @id @default(uuid()) @db.Char(36)
+  organizationId         String           @map("organization_id") @db.Char(36)
+  category               DocumentCategory
+  name                   String           @db.VarChar(200)
+  description            String?          @db.VarChar(1000)
+  isRequired             Boolean          @default(true) @map("is_required")
+  applicableDepartmentId String?          @map("applicable_department_id") @db.Char(36)
+  createdAt              DateTime         @default(now()) @map("created_at") @db.DateTime(3)
+  updatedAt              DateTime         @updatedAt @map("updated_at") @db.DateTime(3)
+
+  organization           Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "doc_reqs_org_fkey")
+  department             Department?      @relation(fields: [organizationId, applicableDepartmentId], references: [organizationId, id], onDelete: Cascade, onUpdate: Restrict, map: "doc_reqs_org_dept_fkey")
+
+  @@unique([organizationId, id], map: "doc_reqs_org_id_unique")
+  @@index([organizationId, category], map: "doc_reqs_org_cat_idx")
+  @@map("document_requirements")
+}
+
+model AutomationRule {
+  id             String                @id @default(uuid()) @db.Char(36)
+  organizationId String                @map("organization_id") @db.Char(36)
+  name           String                @db.VarChar(200)
+  description    String?               @db.VarChar(1000)
+  trigger        String                @db.VarChar(100)
+  conditions     String                @db.Text
+  actions        String                @db.Text
+  isActive       Boolean               @default(true) @map("is_active")
+  lastRunAt      DateTime?             @map("last_run_at") @db.DateTime(3)
+  createdBy      String                @map("created_by") @db.Char(36)
+  updatedBy      String?               @map("updated_by") @db.Char(36)
+  createdAt      DateTime              @default(now()) @map("created_at") @db.DateTime(3)
+  updatedAt      DateTime              @updatedAt @map("updated_at") @db.DateTime(3)
+
+  organization   Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "auto_rules_org_fkey")
+  executions     AutomationExecution[]
+
+  @@unique([organizationId, id], map: "auto_rules_org_id_unique")
+  @@index([organizationId, trigger], map: "auto_rules_org_trigger_idx")
+  @@index([organizationId, isActive], map: "auto_rules_org_active_idx")
+  @@map("automation_rules")
+}
+
+model AutomationExecution {
+  id               String          @id @default(uuid()) @db.Char(36)
+  organizationId   String          @map("organization_id") @db.Char(36)
+  automationRuleId String          @map("automation_rule_id") @db.Char(36)
+  event            String          @db.VarChar(100)
+  entityType       String?         @map("entity_type") @db.VarChar(50)
+  entityId         String?         @map("entity_id") @db.VarChar(100)
+  status           String          @db.VarChar(20)
+  idempotencyKey   String?         @map("idempotency_key") @db.VarChar(191)
+  error            String?         @db.Text
+  metadata         String?         @db.Text
+  startedAt        DateTime        @default(now()) @map("started_at") @db.DateTime(3)
+  completedAt      DateTime?       @map("completed_at") @db.DateTime(3)
+  createdAt        DateTime        @default(now()) @map("created_at") @db.DateTime(3)
+
+  organization     Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "auto_exec_org_fkey")
+  rule             AutomationRule  @relation(fields: [automationRuleId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "auto_exec_rule_fkey")
+
+  @@unique([organizationId, id], map: "auto_exec_org_id_unique")
+  @@index([organizationId, automationRuleId], map: "auto_exec_org_rule_idx")
+  @@index([organizationId, idempotencyKey], map: "auto_exec_org_idemp_idx")
+  @@index([organizationId, status], map: "auto_exec_org_status_idx")
+  @@map("automation_executions")
+}
+
+model WorkflowDefinition {
+  id             String             @id @default(uuid()) @db.Char(36)
+  organizationId String             @map("organization_id") @db.Char(36)
+  name           String             @db.VarChar(200)
+  description    String?            @db.VarChar(1000)
+  triggerType    String             @map("trigger_type") @db.VarChar(100)
+  steps          String             @db.Text
+  isActive       Boolean            @default(true) @map("is_active")
+  createdBy      String             @map("created_by") @db.Char(36)
+  createdAt      DateTime           @default(now()) @map("created_at") @db.DateTime(3)
+  updatedAt      DateTime           @updatedAt @map("updated_at") @db.DateTime(3)
+
+  organization   Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "wf_defs_org_fkey")
+  instances      WorkflowInstance[]
+
+  @@unique([organizationId, id], map: "wf_defs_org_id_unique")
+  @@index([organizationId, triggerType], map: "wf_defs_org_trigger_idx")
+  @@map("workflow_definitions")
+}
+
+model WorkflowInstance {
+  id                   String                  @id @default(uuid()) @db.Char(36)
+  organizationId       String                  @map("organization_id") @db.Char(36)
+  workflowDefinitionId String                  @map("workflow_definition_id") @db.Char(36)
+  title                String                  @db.VarChar(255)
+  entityType           String?                 @map("entity_type") @db.VarChar(50)
+  entityId             String?                 @map("entity_id") @db.VarChar(100)
+  status               String                  @default("RUNNING") @db.VarChar(20)
+  currentStepIndex     Int                     @default(0) @map("current_step_index")
+  data                 String?                 @db.Text
+  ownerUserId          String                  @map("owner_user_id") @db.Char(36)
+  startedAt            DateTime                @default(now()) @map("started_at") @db.DateTime(3)
+  completedAt          DateTime?               @map("completed_at") @db.DateTime(3)
+  createdAt            DateTime                @default(now()) @map("created_at") @db.DateTime(3)
+  updatedAt            DateTime                @updatedAt @map("updated_at") @db.DateTime(3)
+
+  organization         Organization            @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "wf_inst_org_fkey")
+  definition           WorkflowDefinition      @relation(fields: [workflowDefinitionId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "wf_inst_def_fkey")
+  stepExecutions       WorkflowStepExecution[]
+
+  @@unique([organizationId, id], map: "wf_inst_org_id_unique")
+  @@index([organizationId, status], map: "wf_inst_org_status_idx")
+  @@index([organizationId, workflowDefinitionId], map: "wf_inst_org_def_idx")
+  @@map("workflow_instances")
+}
+
+model WorkflowStepExecution {
+  id                 String           @id @default(uuid()) @db.Char(36)
+  organizationId     String           @map("organization_id") @db.Char(36)
+  workflowInstanceId String           @map("workflow_instance_id") @db.Char(36)
+  stepIndex          Int              @map("step_index")
+  stepName           String           @map("step_name") @db.VarChar(200)
+  stepType           String           @map("step_type") @db.VarChar(50)
+  status             String           @default("PENDING") @db.VarChar(20)
+  assignedToUserId   String?          @map("assigned_to_user_id") @db.Char(36)
+  actionPayload      String?          @map("action_payload") @db.Text
+  resultPayload      String?          @map("result_payload") @db.Text
+  comments           String?          @db.Text
+  executedAt         DateTime?        @map("executed_at") @db.DateTime(3)
+  completedAt        DateTime?        @map("completed_at") @db.DateTime(3)
+  createdAt          DateTime         @default(now()) @map("created_at") @db.DateTime(3)
+
+  organization       Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "wf_steps_org_fkey")
+  instance           WorkflowInstance @relation(fields: [workflowInstanceId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "wf_steps_inst_fkey")
+
+  @@unique([organizationId, id], map: "wf_steps_org_id_unique")
+  @@index([organizationId, workflowInstanceId], map: "wf_steps_org_inst_idx")
+  @@index([organizationId, status], map: "wf_steps_org_status_idx")
+  @@map("workflow_step_executions")
+}
+

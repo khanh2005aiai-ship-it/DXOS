@@ -1,0 +1,1 @@
+export { EmployeeDocumentsCard } from './HoSoTaiLieuNhanVienCard';

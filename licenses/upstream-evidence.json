@@ -1,0 +1,137 @@
+{
+  "@pkgr/core@0.3.6": [
+    {
+      "file": "texts/82a222189ab9764f8ec1c052b9661f2c9f12db52387312acbf73b2be5b8b6c32.txt",
+      "sha256": "82a222189ab9764f8ec1c052b9661f2c9f12db52387312acbf73b2be5b8b6c32",
+      "source": "https://raw.githubusercontent.com/un-ts/pkgr/6e1c7260486c7251e61404176a293986229a5869/LICENSE",
+      "packageVersion": "0.3.6",
+      "ref": "6e1c7260486c7251e61404176a293986229a5869"
+    }
+  ],
+  "@esbuild/win32-x64@0.28.2": [
+    {
+      "file": "texts/b40ec5baec7bb34fa5b1c09521fa3cd52d5fad7adafed74932a2010d3612a681.txt",
+      "sha256": "b40ec5baec7bb34fa5b1c09521fa3cd52d5fad7adafed74932a2010d3612a681",
+      "source": "https://raw.githubusercontent.com/evanw/esbuild/609683d892977362a0f99026cb74b96263d728a9/LICENSE.md",
+      "packageVersion": "0.28.2",
+      "ref": "609683d892977362a0f99026cb74b96263d728a9"
+    }
+  ],
+  "@redis/bloom@5.12.1": [
+    {
+      "file": "texts/a57b250a5bf03d7afe55b74063313f2adb7b00d546c0ab149a89398333fe3cc8.txt",
+      "sha256": "a57b250a5bf03d7afe55b74063313f2adb7b00d546c0ab149a89398333fe3cc8",
+      "source": "https://raw.githubusercontent.com/redis/node-redis/838c28d9f55d13a7933e650b9f7782fdb5af4f71/LICENSE",
+      "packageVersion": "5.12.1",
+      "ref": "838c28d9f55d13a7933e650b9f7782fdb5af4f71"
+    }
+  ],
+  "@redis/client@5.12.1": [
+    {
+      "file": "texts/a57b250a5bf03d7afe55b74063313f2adb7b00d546c0ab149a89398333fe3cc8.txt",
+      "sha256": "a57b250a5bf03d7afe55b74063313f2adb7b00d546c0ab149a89398333fe3cc8",
+      "source": "https://raw.githubusercontent.com/redis/node-redis/789d6d5c5c774fda24257ce1fc7f4f66b80ae689/LICENSE",
+      "packageVersion": "5.12.1",
+      "ref": "789d6d5c5c774fda24257ce1fc7f4f66b80ae689"
+    }
+  ],
+  "@redis/json@5.12.1": [
+    {
+      "file": "texts/a57b250a5bf03d7afe55b74063313f2adb7b00d546c0ab149a89398333fe3cc8.txt",
+      "sha256": "a57b250a5bf03d7afe55b74063313f2adb7b00d546c0ab149a89398333fe3cc8",
+      "source": "https://raw.githubusercontent.com/redis/node-redis/02cfd5ad4c07ef6c1d703e25d3c2076eacfb4b45/LICENSE",
+      "packageVersion": "5.12.1",
+      "ref": "02cfd5ad4c07ef6c1d703e25d3c2076eacfb4b45"
+    }
+  ],
+  "@redis/search@5.12.1": [
+    {
+      "file": "texts/a57b250a5bf03d7afe55b74063313f2adb7b00d546c0ab149a89398333fe3cc8.txt",
+      "sha256": "a57b250a5bf03d7afe55b74063313f2adb7b00d546c0ab149a89398333fe3cc8",
+      "source": "https://raw.githubusercontent.com/redis/node-redis/9e7767c5bf2cb06bcce872fe99e5dbb349e3a074/LICENSE",
+      "packageVersion": "5.12.1",
+      "ref": "9e7767c5bf2cb06bcce872fe99e5dbb349e3a074"
+    }
+  ],
+  "@redis/time-series@5.12.1": [
+    {
+      "file": "texts/a57b250a5bf03d7afe55b74063313f2adb7b00d546c0ab149a89398333fe3cc8.txt",
+      "sha256": "a57b250a5bf03d7afe55b74063313f2adb7b00d546c0ab149a89398333fe3cc8",
+      "source": "https://raw.githubusercontent.com/redis/node-redis/de70920ecb4caf2a9c871a24cf08f1fcb41b1d2d/LICENSE",
+      "packageVersion": "5.12.1",
+      "ref": "de70920ecb4caf2a9c871a24cf08f1fcb41b1d2d"
+    }
+  ],
+  "@unrs/resolver-binding-win32-x64-msvc@1.12.2": [
+    {
+      "file": "texts/a9e35996693bd619302922c731fa2f620ad12d5f50b19a37c8a3e0e078c9bd2f.txt",
+      "sha256": "a9e35996693bd619302922c731fa2f620ad12d5f50b19a37c8a3e0e078c9bd2f",
+      "source": "https://raw.githubusercontent.com/unrs/unrs-resolver/ccb26d205e2938b16069c64a28996b48ee97ff94/LICENSE",
+      "packageVersion": "1.12.2",
+      "ref": "ccb26d205e2938b16069c64a28996b48ee97ff94"
+    }
+  ],
+  "redis@5.12.1": [
+    {
+      "file": "texts/a57b250a5bf03d7afe55b74063313f2adb7b00d546c0ab149a89398333fe3cc8.txt",
+      "sha256": "a57b250a5bf03d7afe55b74063313f2adb7b00d546c0ab149a89398333fe3cc8",
+      "source": "https://raw.githubusercontent.com/redis/node-redis/6a447261fc77c4577aa5127fb269f8b69cfe6732/LICENSE",
+      "packageVersion": "5.12.1",
+      "ref": "6a447261fc77c4577aa5127fb269f8b69cfe6732"
+    }
+  ],
+  "unrs-resolver@1.12.2": [
+    {
+      "file": "texts/a9e35996693bd619302922c731fa2f620ad12d5f50b19a37c8a3e0e078c9bd2f.txt",
+      "sha256": "a9e35996693bd619302922c731fa2f620ad12d5f50b19a37c8a3e0e078c9bd2f",
+      "source": "https://raw.githubusercontent.com/unrs/unrs-resolver/ccb26d205e2938b16069c64a28996b48ee97ff94/LICENSE",
+      "packageVersion": "1.12.2",
+      "ref": "ccb26d205e2938b16069c64a28996b48ee97ff94"
+    }
+  ],
+  "imurmurhash@0.1.4": [
+    {
+      "file": "texts/fa0943ddcaa857d901a9eb92254d89876297ecdfbc884d294a927df08ebcbbe8.txt",
+      "sha256": "fa0943ddcaa857d901a9eb92254d89876297ecdfbc884d294a927df08ebcbbe8",
+      "source": "https://raw.githubusercontent.com/jensyt/imurmurhash-js/0.1.4/LICENSE",
+      "packageVersion": "0.1.4",
+      "ref": "0.1.4"
+    }
+  ],
+  "@esbuild/win32-x64@0.21.5": [
+    {
+      "file": "texts/b40ec5baec7bb34fa5b1c09521fa3cd52d5fad7adafed74932a2010d3612a681.txt",
+      "sha256": "b40ec5baec7bb34fa5b1c09521fa3cd52d5fad7adafed74932a2010d3612a681",
+      "source": "https://raw.githubusercontent.com/evanw/esbuild/fc37c2fa9de2ad77476a6d4a8f1516196b90187e/LICENSE.md",
+      "packageVersion": "0.21.5",
+      "ref": "fc37c2fa9de2ad77476a6d4a8f1516196b90187e"
+    }
+  ],
+  "@rollup/rollup-win32-x64-gnu@4.63.1": [
+    {
+      "file": "texts/fa1bd040c5bdeefe65b3821cebf474f2733ce65df13089bd151dda1778e62fe8.txt",
+      "sha256": "fa1bd040c5bdeefe65b3821cebf474f2733ce65df13089bd151dda1778e62fe8",
+      "source": "https://raw.githubusercontent.com/rollup/rollup/78bfef0cb94479566f81012fafa372c84b90bd34/LICENSE.md",
+      "packageVersion": "4.63.1",
+      "ref": "78bfef0cb94479566f81012fafa372c84b90bd34"
+    }
+  ],
+  "@rollup/rollup-win32-x64-msvc@4.63.1": [
+    {
+      "file": "texts/fa1bd040c5bdeefe65b3821cebf474f2733ce65df13089bd151dda1778e62fe8.txt",
+      "sha256": "fa1bd040c5bdeefe65b3821cebf474f2733ce65df13089bd151dda1778e62fe8",
+      "source": "https://raw.githubusercontent.com/rollup/rollup/78bfef0cb94479566f81012fafa372c84b90bd34/LICENSE.md",
+      "packageVersion": "4.63.1",
+      "ref": "78bfef0cb94479566f81012fafa372c84b90bd34"
+    }
+  ],
+  "saxes@6.0.0": [
+    {
+      "file": "texts/0fac2374380621b22e6b50451057721a9c52935b02d16d106a9f04897f061d0e.txt",
+      "sha256": "0fac2374380621b22e6b50451057721a9c52935b02d16d106a9f04897f061d0e",
+      "source": "https://raw.githubusercontent.com/lddubeau/saxes/211fa0ebec9b628affc09219199639887174bfc3/LICENSE",
+      "packageVersion": "6.0.0",
+      "ref": "211fa0ebec9b628affc09219199639887174bfc3"
+    }
+  ]
+}

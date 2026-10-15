@@ -1,0 +1,9 @@
+import { Module } from '@nestjs/common';
+import { AuthModule } from '../auth/auth.module';
+import { RbacModule } from '../rbac/rbac.module';
+import { ReportsController } from './reports.controller';
+import { ReportsService } from './reports.service';
+import { AnalyticsRepository } from './analytics.repository';
+import { PerformanceAnalyticsProvider } from './performance-analytics.provider';
+@Module({ imports: [AuthModule, RbacModule], controllers: [ReportsController], providers: [ReportsService, AnalyticsRepository, PerformanceAnalyticsProvider] })
+export class ReportsModule {}

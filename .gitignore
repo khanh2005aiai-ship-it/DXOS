@@ -1,0 +1,48 @@
+# Dependencies and generated artifacts
+node_modules/
+.npm-cache/
+dist/
+coverage/
+.eslintcache
+*.tsbuildinfo
+
+# Runtime configuration and local data
+.env
+.env.*
+!.env.example
+*.log
+
+# Prisma and database local files
+database/*.db
+database/*.db-journal
+
+# Codex workspace artifacts
+work/
+outputs/
+
+# Editor and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Private security stack configuration / operator secrets
+.security*.env
+.secrets/
+.scannerwork/
+security-artifacts/
+# Local archives, private data and generated release bundles
+backups/
+.docker-data/
+.scannerwork/
+*.dump
+*.sql.gz
+*.zip
+*.7z
+*.tar.gz
+*.p12
+*.pfx
+*.pem
+*.key
+# Keep example configuration, never real configuration
+!.env.example

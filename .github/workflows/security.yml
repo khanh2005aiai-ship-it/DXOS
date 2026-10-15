@@ -1,0 +1,88 @@
+name: DX-OS verification and security
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: verification-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0.44
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+          MYSQL_DATABASE: dx_os_ci
+        ports: ["3306:3306"]
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s --health-timeout=5s --health-retries=20
+    env:
+      # Ephemeral runner only; never reuse this empty-password DB configuration in deployment.
+      DATABASE_URL: mysql://root@127.0.0.1:3306/dx_os_ci
+      NODE_ENV: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22.21.1", cache: npm, cache-dependency-path: "package-lock.json" }
+      - run: npm ci
+      - run: npm run db:generate && npm run db:validate
+      - run: npm run lint:backend
+      - run: npm run test:rbac:mysql --workspace @dx-os/backend -- --coverage
+      - run: npm run build:backend
+      - run: node backend/scripts/test-oidc-protocol.js
+      - run: node backend/scripts/audit-licenses.js --strict
+      - name: Collect legal notice evidence (missing texts stay visible)
+        run: node backend/scripts/collect-license-notices.js
+      - run: npm audit --omit=dev --audit-level=high
+      - run: npm ci && npm run lint && npm test && npm run build && npm audit --omit=dev --audit-level=high
+        working-directory: frontend
+      - name: Collect notices for actual Linux installation
+        run: |
+          node backend/scripts/collect-license-notices.js --fetch-missing
+          node backend/scripts/review-declared-licenses.js
+          node backend/scripts/collect-license-notices.js --strict
+      - name: OSS quality gate (Sonar replacement)
+        run: node backend/scripts/run-quality-local.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: verification-results
+          path: |
+            coverage/lcov.info
+            security-artifacts/npm-licenses.json
+            security-artifacts/quality-*
+            licenses/
+          if-no-files-found: warn
+
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: >-
+          docker run --rm -v "$PWD:/work:ro" -w /work aquasec/trivy:0.69.3
+          fs --scanners vuln,misconfig --severity HIGH,CRITICAL --exit-code 1
+          --skip-dirs outputs --skip-dirs work --skip-dirs .git .
+      - name: Build selected OSS runtime images
+        run: |
+          docker build -f backend/deploy/backend.Dockerfile -t dxos-security-backend .
+          docker build -f backend/deploy/frontend.Dockerfile -t dxos-security-frontend .
+          docker build -f backend/deploy/openbao.Dockerfile -t dxos-security-openbao-oss .
+          docker build -f backend/deploy/valkey.Dockerfile -t dxos-security-valkey-oss .
+          docker build -f backend/deploy/clamav.Dockerfile -t dxos-security-clamav-oss .
+          docker build -f backend/deploy/apisix.Dockerfile -t dxos-security-apisix-oss .
+          docker build -f backend/deploy/waf.Dockerfile -t dxos-security-waf-oss .
+          docker pull quay.io/keycloak/keycloak:26.8.1@sha256:79c623a22abacf3fe6c00a5fb30f5b7843d717b234033b80995891c06116d244
+      - uses: actions/setup-node@v4
+        with: { node-version: "22.21.1" }
+      - run: node backend/scripts/scan-runtime-images.js --images-only
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: runtime-sbom-and-scans
+          path: security-artifacts/runtime-*

@@ -1,0 +1,1 @@
+export { CompensationCard } from './ThongTinLuongThuongCard';

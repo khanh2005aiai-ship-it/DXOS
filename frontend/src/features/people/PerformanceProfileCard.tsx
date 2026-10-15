@@ -1,0 +1,1 @@
+export { PerformanceProfileCard } from './HoSoHieuSuatCard';

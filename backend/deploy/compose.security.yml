@@ -1,0 +1,137 @@
+name: dxos-security
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.8.1@sha256:79c623a22abacf3fe6c00a5fb30f5b7843d717b234033b80995891c06116d244
+    command: [start-dev, --import-realm]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: dxos-operator
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:?Run init-security-env.js first}
+      KC_HOSTNAME: http://localhost:8180
+    ports: ["127.0.0.1:8180:8080"]
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+      - ./keycloak/realm.json:/opt/keycloak/data/import/realm.json:ro
+    networks: [identity]
+    restart: unless-stopped
+
+  clamav:
+    image: dxos-security-clamav-oss
+    build: { context: ../.., dockerfile: backend/deploy/clamav.Dockerfile }
+    ports: ["127.0.0.1:3310:3310"]
+    volumes: [clamav_signatures:/var/lib/clamav]
+    networks: [security]
+    restart: unless-stopped
+
+  redis:
+    # BSD-licensed Valkey, wire-compatible with the existing Redis rate-limit adapter.
+    image: dxos-security-valkey-oss
+    build: { context: ../.., dockerfile: backend/deploy/valkey.Dockerfile }
+    command: [valkey-server, --save, "", --appendonly, "no", --maxmemory, 128mb, --maxmemory-policy, noeviction]
+    networks: [security]
+    restart: unless-stopped
+
+  openbao:
+    image: dxos-security-openbao-oss
+    build: { context: ../.., dockerfile: backend/deploy/openbao.Dockerfile }
+    # Persistent, sealed server; NOT an auto-unsealed dev server or hardcoded root token.
+    command: [server, -config=/openbao/config/vault.hcl]
+    ports: ["127.0.0.1:8200:8200"]
+    volumes:
+      - openbao_raft_data:/openbao/file
+      - ./vault/vault.hcl:/openbao/config/vault.hcl:ro
+      - ../../.secrets/openbao-tls:/openbao/tls:ro
+      - openbao_logs:/openbao/logs
+    networks: [secrets]
+    restart: unless-stopped
+
+  openbao-agent:
+    image: dxos-security-openbao-oss
+    command: [agent, -config=/run/config/agent.hcl, -log-level=warn]
+    volumes:
+      - ./vault/agent.hcl:/run/config/agent.hcl:ro
+      - ../../.secrets/openbao-approle:/run/approle:ro
+      - ../../.secrets/openbao-tls/ca.crt:/run/secrets/openbao_ca:ro
+      - openbao_agent_tokens:/openbao/file
+    networks: [secrets]
+    depends_on: [openbao]
+    healthcheck:
+      test: [CMD-SHELL, "test -s /openbao/file/token"]
+      interval: 5s
+      timeout: 2s
+      retries: 12
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
+
+  backend:
+    profiles: [app]
+    build: { context: ../.., dockerfile: backend/deploy/backend.Dockerfile }
+    env_file: ../../.security.backend.env
+    environment:
+      PORT: "3000"
+      FILE_STORAGE_ROOT: /data/files
+      FILE_SCAN_ENABLED: "true"
+      CLAMAV_HOST: clamav
+      CLAMAV_PORT: "3310"
+      REDIS_URL: redis://redis:6379
+      VAULT_ENABLED: "true"
+      VAULT_ADDR: https://openbao:8200
+      VAULT_TOKEN_FILE: /run/secrets/openbao/token
+      VAULT_SECRET_PATH: secret/data/dxos-container
+      NODE_EXTRA_CA_CERTS: /run/secrets/openbao_ca
+    volumes:
+      - type: bind
+        source: ${DXOS_PRIVATE_FILE_ROOT:?Configure private file storage}
+        target: /data/files
+      - openbao_agent_tokens:/run/secrets/openbao:ro
+      - ../../.secrets/openbao-tls/ca.crt:/run/secrets/openbao_ca:ro
+    networks: [app, security, identity, secrets]
+    extra_hosts: ["host.docker.internal:host-gateway"]
+    depends_on:
+      redis: { condition: service_started }
+      clamav: { condition: service_healthy }
+      openbao-agent: { condition: service_healthy }
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    restart: unless-stopped
+
+  apisix:
+    profiles: [app]
+    image: dxos-security-apisix-oss
+    build: { context: ../.., dockerfile: backend/deploy/apisix.Dockerfile }
+    volumes:
+      - ./apisix/config.yaml:/usr/local/apisix/conf/config.yaml:ro
+      - ./apisix/apisix.yaml:/usr/local/apisix/conf/apisix.yaml:ro
+    networks: [app, edge]
+    depends_on: [backend]
+    restart: unless-stopped
+
+  frontend:
+    profiles: [app]
+    build: { context: ../.., dockerfile: backend/deploy/frontend.Dockerfile }
+    networks: [edge]
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
+
+  waf:
+    profiles: [app]
+    image: dxos-security-waf-oss
+    build: { context: ../.., dockerfile: backend/deploy/waf.Dockerfile }
+    ports: ["127.0.0.1:8088:8080"]
+    volumes: ["./waf/Caddyfile:/config/caddy/Caddyfile:ro"]
+    networks: [edge]
+    depends_on: [apisix, frontend]
+    restart: unless-stopped
+
+networks:
+  identity: {}
+  security: {}
+  secrets: {}
+  app: { internal: true }
+  edge: {}
+volumes:
+  keycloak_data: {}
+  clamav_signatures: {}
+  openbao_data: {}
+  openbao_raft_data: {}
+  openbao_logs: {}
+  openbao_agent_tokens: {}
