@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { DashboardPage } from '@/features/dashboard/DashboardPage';
 import { useOrganization } from '@/contexts/OrganizationContext';
 import { getDashboard, type DashboardData } from '@/api/dashboard';
+import { usePermission } from '@/hooks/usePermission';
 
 vi.mock('@/contexts/OrganizationContext', () => ({ useOrganization: vi.fn() }));
 vi.mock('@/api/dashboard', () => ({ getDashboard: vi.fn() }));
@@ -23,6 +24,19 @@ const snapshot = (organizationId = 'org-a'): DashboardData => ({ organizationId,
 });
 const page = () => <MemoryRouter><DashboardPage /></MemoryRouter>;
 describe('Dashboard aggregates and organization isolation', () => {
+  it('hides creation shortcuts for a read-only operator', async () => {
+    const mocked = vi.mocked(usePermission);
+    const original = mocked.getMockImplementation();
+    mocked.mockReturnValue({ permissions: ['task:read'], hasPermission: p => p === 'task:read', hasAnyPermission: (...p) => p.includes('task:read'), isLoading: false, error: null, refreshPermissions: vi.fn() });
+    try {
+      render(page());
+      await screen.findByRole('link', { name: 'Nhân sự: 123' });
+      expect(screen.queryByRole('link', { name: 'Thêm công việc' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('link', { name: 'Thêm nhân sự' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('link', { name: 'Hỏi Trợ lý AI' })).not.toBeInTheDocument();
+      expect(screen.getByRole('link', { name: 'Lịch đi làm' })).toBeInTheDocument();
+    } finally { if (original) mocked.mockImplementation(original); }
+  });
   beforeEach(() => { vi.clearAllMocks(); organization(); vi.mocked(getDashboard).mockResolvedValue(snapshot()); });
   it('renders exact aggregate KPIs, charts, workload and Vietnamese activity labels', async () => {
     render(page());

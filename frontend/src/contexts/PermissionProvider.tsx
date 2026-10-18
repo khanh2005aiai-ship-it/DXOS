@@ -1,115 +1,60 @@
-import { PermissionContext, PermissionContextValue, usePermissionContext } from './permission-context';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { PermissionContext } from './permission-context';
 import type { Permission, ApiError } from '@/api/types';
 import { getPermissions } from '@/api/permissions';
 import { useOrganization } from './OrganizationContext';
 import { useAuth } from './AuthContext';
 import { isApiError } from '@/api/client';
 
+const EMPTY: Permission[] = [];
+type Snapshot = { scope: string | null; permissions: Permission[]; loading: boolean; error: ApiError | null };
+
 export function PermissionProvider({ children }: { children: React.ReactNode }) {
   const { currentOrg } = useOrganization();
-  const { isAuthenticated } = useAuth();
-  const [permissions, setPermissions] = useState<Permission[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<ApiError | null>(null);
+  const { isAuthenticated, user } = useAuth();
+  const orgId = currentOrg?.id;
+  const scope = isAuthenticated && orgId ? JSON.stringify([user?.id, orgId]) : null;
+  const [snapshot, setSnapshot] = useState<Snapshot>({ scope: null, permissions: EMPTY, loading: false, error: null });
+  const request = useRef(0);
 
-  // Track active request to prevent duplicate concurrent requests
-  const activeRequestIdRef = useRef<string | null>(null);
-  const lastOrgIdRef = useRef<string | null>(null);
-
-  const loadPermissions = useCallback(async (orgId: string) => {
-    // Prevent duplicate concurrent requests for the same org
-    if (activeRequestIdRef.current === orgId) return;
-    activeRequestIdRef.current = orgId;
-
-    setIsLoading(true);
-    setError(null);
-
+  const loadPermissions = useCallback(async (organizationId: string, requestedScope: string) => {
+    const id = ++request.current;
+    setSnapshot({ scope: requestedScope, permissions: EMPTY, loading: true, error: null });
     try {
-      const response = await getPermissions(orgId);
-      // Ensure we only apply if org hasn't changed while request was in-flight
-      if (activeRequestIdRef.current === orgId) {
-        setPermissions(response.permissions);
-        setError(null);
+      const response = await getPermissions(organizationId);
+      if (id !== request.current) return;
+      if (response.organizationId !== organizationId) {
+        setSnapshot({ scope: requestedScope, permissions: EMPTY, loading: false, error: {
+          success: false, error: { code: 'FORBIDDEN', message: 'Quyền truy cập không khớp tổ chức hiện tại.', requestId: '' },
+        } });
+        return;
       }
+      setSnapshot({ scope: requestedScope, permissions: response.permissions, loading: false, error: null });
     } catch (err) {
-      if (activeRequestIdRef.current === orgId) {
-        setPermissions([]); // Fail-safe: do not invent permissions on error
-        if (isApiError(err)) {
-          setError(err);
-        } else {
-          setError({
-            success: false,
-            error: {
-              code: 'NETWORK_ERROR',
-              message: 'Không thể tải danh sách quyền hạn. Vui lòng kiểm tra kết nối.',
-              requestId: '',
-            },
-          });
-        }
-      }
-    } finally {
-      if (activeRequestIdRef.current === orgId) {
-        activeRequestIdRef.current = null;
-        setIsLoading(false);
-      }
+      if (id !== request.current) return;
+      setSnapshot({ scope: requestedScope, permissions: EMPTY, loading: false, error: isApiError(err) ? err : {
+        success: false, error: { code: 'NETWORK_ERROR', message: 'Không thể tải quyền truy cập. Vui lòng thử lại.', requestId: '' },
+      } });
     }
   }, []);
 
   useEffect(() => {
-    // Invalidate immediately on logout or when no org is selected
-    if (!isAuthenticated || !currentOrg) {
-      setPermissions([]);
-      setError(null);
-      setIsLoading(false);
-      activeRequestIdRef.current = null;
-      lastOrgIdRef.current = null;
-      return;
-    }
+    if (scope && orgId) void loadPermissions(orgId, scope);
+    // Each request has its own generation, including A -> B -> A and logout/login.
+    return () => { request.current += 1; };
+  }, [scope, orgId, loadPermissions]);
 
-    const orgId = currentOrg.id;
-    // Invalidate permissions immediately when organization switches to prevent leakage
-    if (lastOrgIdRef.current !== orgId) {
-      setPermissions([]);
-      setError(null);
-      lastOrgIdRef.current = orgId;
-    }
-
-    loadPermissions(orgId);
-  }, [isAuthenticated, currentOrg, loadPermissions]);
-
-  const hasPermission = useCallback(
-    (permission: Permission): boolean => {
-      return permissions.includes(permission);
-    },
-    [permissions]
-  );
-
-  const hasAnyPermission = useCallback(
-    (...perms: Permission[]): boolean => {
-      return perms.some((p) => permissions.includes(p));
-    },
-    [permissions]
-  );
-
+  // Scope during render so another actor/tenant cannot inherit the previous frame.
+  const matches = scope !== null && snapshot.scope === scope;
+  const permissions = matches && !snapshot.loading ? snapshot.permissions : EMPTY;
+  const hasPermission = useCallback((permission: Permission) => permissions.includes(permission), [permissions]);
+  const hasAnyPermission = useCallback((...perms: Permission[]) => perms.some(p => permissions.includes(p)), [permissions]);
   const refreshPermissions = useCallback(async () => {
-    if (currentOrg) {
-      await loadPermissions(currentOrg.id);
-    }
-  }, [currentOrg, loadPermissions]);
+    if (scope && orgId) await loadPermissions(orgId, scope);
+  }, [scope, orgId, loadPermissions]);
 
-  return (
-    <PermissionContext.Provider
-      value={{
-        permissions,
-        hasPermission,
-        hasAnyPermission,
-        isLoading,
-        error,
-        refreshPermissions,
-      }}
-    >
-      {children}
-    </PermissionContext.Provider>
-  );
+  return <PermissionContext.Provider value={{ permissions, hasPermission, hasAnyPermission,
+    isLoading: scope !== null && (!matches || snapshot.loading), error: matches ? snapshot.error : null, refreshPermissions }}>
+    {children}
+  </PermissionContext.Provider>;
 }

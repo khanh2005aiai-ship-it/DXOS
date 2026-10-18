@@ -21,17 +21,17 @@ export function OrganizationSwitcher() {
   if (!currentOrg) return null;
 
   return (
-    <div className="relative" ref={ref}>
+    <div className="relative min-w-0" ref={ref}>
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-slate-100 text-sm font-medium text-slate-700"
+        className="workspace-org-button flex max-w-full items-center gap-2 px-2 sm:px-3 py-2 rounded-xl text-sm font-medium"
         aria-expanded={open}
         aria-haspopup="listbox"
         aria-label="Chuyển đổi tổ chức"
       >
-        <Building className="h-4 w-4 text-slate-400" aria-hidden="true" />
-        <span className="truncate max-w-[200px]">{currentOrg.name}</span>
-        <ChevronDown className="h-4 w-4 text-slate-400" aria-hidden="true" />
+        <Building className="hidden sm:block h-4 w-4 text-slate-400 shrink-0" aria-hidden="true" />
+        <span className="truncate max-w-[110px] sm:max-w-[240px]" title={currentOrg.name}>{currentOrg.name}</span>
+        <ChevronDown className="h-4 w-4 text-slate-400 shrink-0" aria-hidden="true" />
       </button>
 
       {open && organizations.length > 1 && (

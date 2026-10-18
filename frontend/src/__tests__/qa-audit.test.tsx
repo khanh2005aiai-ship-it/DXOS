@@ -215,7 +215,7 @@ describe('DXOS-QA-001: Frontend QA & Release Candidate Audit Tests', () => {
       </MemoryRouter>
     );
 
-    const notifLink = screen.getByLabelText(/Thông báo, 3 chưa đọc/i);
+    const notifLink = screen.getByLabelText(/Thông báo, Có thông báo chưa đọc/i);
     expect(notifLink).toBeInTheDocument();
     expect(notifLink.tagName).toBe('A');
     expect(notifLink.getAttribute('href')).toBe('/notifications');

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { usePermission } from '@/hooks/usePermission';
 import {
   Building2,
   Users,
@@ -53,8 +54,20 @@ function Heading({ children, to }: { children: React.ReactNode; to?: string }) {
   );
 }
 
+const quickActions = [
+  { to: '/tasks', label: 'Thêm công việc', icon: Plus, permission: 'task:create' },
+  { to: '/people', label: 'Thêm nhân sự', icon: UserPlus, permission: 'employee:create' },
+  { to: '/calendar', label: 'Tạo sự kiện', icon: CalendarPlus, permission: 'calendar:create' },
+  { to: '/files', label: 'Kho tài liệu', icon: FileText, permission: 'file:read' },
+  { to: '/my-schedule', label: 'Lịch đi làm', icon: CalendarDays, permission: null },
+  { to: '/attendance', label: 'Chấm công', icon: Clock, permission: 'attendance:read' },
+  { to: '/approvals', label: 'Phê duyệt', icon: ClipboardCheck, permission: 'approval:read' },
+  { to: '/ai', label: 'Hỏi Trợ lý AI', icon: Bot, permission: 'ai:use' },
+] as const;
+
 export function DashboardPage() {
   const { currentOrg } = useOrganization();
+  const { hasPermission } = usePermission();
   const { data, error, isLoading, refresh } = useOrganizationResource(getDashboard);
   const guard = useOrgBootstrapGuard();
   if (guard) return guard;
@@ -137,84 +150,16 @@ export function DashboardPage() {
         }
       />
 
-      {/* Quick Actions */}
-      <div className="card p-4">
-        <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Tác vụ nhanh</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-          <Link
-            to="/tasks"
-            className="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200/90 hover:border-brand-500 hover:bg-brand-50/40 text-slate-700 hover:text-brand-700 transition-all font-medium text-xs sm:text-sm group shadow-sm hover:shadow"
-          >
-            <span className="p-2 rounded-lg bg-blue-50 text-blue-600 group-hover:bg-brand-600 group-hover:text-white transition-colors">
-              <Plus className="h-4 w-4" />
-            </span>
-            <span className="truncate">Thêm công việc</span>
-          </Link>
-          <Link
-            to="/people"
-            className="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200/90 hover:border-brand-500 hover:bg-brand-50/40 text-slate-700 hover:text-brand-700 transition-all font-medium text-xs sm:text-sm group shadow-sm hover:shadow"
-          >
-            <span className="p-2 rounded-lg bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-              <UserPlus className="h-4 w-4" />
-            </span>
-            <span className="truncate">Thêm nhân sự</span>
-          </Link>
-          <Link
-            to="/calendar"
-            className="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200/90 hover:border-brand-500 hover:bg-brand-50/40 text-slate-700 hover:text-brand-700 transition-all font-medium text-xs sm:text-sm group shadow-sm hover:shadow"
-          >
-            <span className="p-2 rounded-lg bg-violet-50 text-violet-600 group-hover:bg-violet-600 group-hover:text-white transition-colors">
-              <CalendarPlus className="h-4 w-4" />
-            </span>
-            <span className="truncate">Tạo sự kiện</span>
-          </Link>
-          <Link
-            to="/files"
-            className="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200/90 hover:border-brand-500 hover:bg-brand-50/40 text-slate-700 hover:text-brand-700 transition-all font-medium text-xs sm:text-sm group shadow-sm hover:shadow"
-          >
-            <span className="p-2 rounded-lg bg-amber-50 text-amber-600 group-hover:bg-amber-600 group-hover:text-white transition-colors">
-              <FileText className="h-4 w-4" />
-            </span>
-            <span className="truncate">Kho tài liệu</span>
-          </Link>
-          <Link
-            to="/my-schedule"
-            className="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200/90 hover:border-brand-500 hover:bg-brand-50/40 text-slate-700 hover:text-brand-700 transition-all font-medium text-xs sm:text-sm group shadow-sm hover:shadow"
-          >
-            <span className="p-2 rounded-lg bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-              <CalendarDays className="h-4 w-4" />
-            </span>
-            <span className="truncate">Lịch đi làm</span>
-          </Link>
-          <Link
-            to="/attendance"
-            className="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200/90 hover:border-brand-500 hover:bg-brand-50/40 text-slate-700 hover:text-brand-700 transition-all font-medium text-xs sm:text-sm group shadow-sm hover:shadow"
-          >
-            <span className="p-2 rounded-lg bg-teal-50 text-teal-600 group-hover:bg-teal-600 group-hover:text-white transition-colors">
-              <Clock className="h-4 w-4" />
-            </span>
-            <span className="truncate">Chấm công</span>
-          </Link>
-          <Link
-            to="/approvals"
-            className="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200/90 hover:border-brand-500 hover:bg-brand-50/40 text-slate-700 hover:text-brand-700 transition-all font-medium text-xs sm:text-sm group shadow-sm hover:shadow"
-          >
-            <span className="p-2 rounded-lg bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors">
-              <ClipboardCheck className="h-4 w-4" />
-            </span>
-            <span className="truncate">Phê duyệt</span>
-          </Link>
-          <Link
-            to="/ai"
-            className="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200/90 hover:border-brand-500 hover:bg-brand-50/40 text-slate-700 hover:text-brand-700 transition-all font-medium text-xs sm:text-sm group shadow-sm hover:shadow"
-          >
-            <span className="p-2 rounded-lg bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-              <Bot className="h-4 w-4" />
-            </span>
-            <span className="truncate">Hỏi Trợ lý AI</span>
-          </Link>
+      <section className="card dashboard-actions p-4 sm:p-5" aria-label="Tác vụ nhanh">
+        <div className="flex items-center justify-between mb-4"><h2 className="text-xs font-semibold tracking-wider uppercase text-slate-500">Tác vụ nhanh</h2><span className="text-xs text-slate-500 hidden sm:inline">Truy cập công việc hằng ngày</span></div>
+        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3">
+          {quickActions.filter(action => !action.permission || hasPermission(action.permission)).map(action => <Link key={action.to} to={action.to} className="dashboard-action-link">
+            <span className="dashboard-action-icon"><action.icon className="h-[18px] w-[18px]" aria-hidden="true" /></span>
+            <span className="min-w-0 text-sm font-medium leading-5">{action.label}</span>
+            <ArrowRight className="h-3.5 w-3.5 ml-auto shrink-0 opacity-40 hidden sm:block" aria-hidden="true" />
+          </Link>)}
         </div>
-      </div>
+      </section>
 
       {/* Top KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -222,12 +167,15 @@ export function DashboardPage() {
           <Link
             key={card.label}
             to={card.to}
-            className="card p-4 flex justify-between gap-3 hover:shadow-md transition-shadow"
+            className="card dashboard-kpi p-5 flex justify-between gap-3 transition-all"
+            aria-disabled={card.value == null || undefined}
+            onClick={event => { if (card.value == null) event.preventDefault(); }}
+            tabIndex={card.value == null ? -1 : undefined}
             aria-label={`${card.label}: ${number(card.value)}${card.percent && card.value != null ? '%' : ''}`}
           >
             <div>
               <p className="text-sm text-slate-500">{card.label}</p>
-              <p className="text-2xl font-semibold text-slate-900 mt-1">
+              <p className="text-3xl font-semibold tracking-tight tabular-nums text-slate-900 mt-2">
                 {number(card.value)}
                 {card.percent && card.value != null ? '%' : ''}
               </p>
@@ -242,7 +190,7 @@ export function DashboardPage() {
 
       {data.tasks && (
         <section
-          className={`rounded-xl border p-4 shadow-sm ${
+          className={`dashboard-health-panel rounded-xl border p-4 shadow-sm ${
             data.tasks.health === 'ATTENTION'
               ? 'border-amber-200 bg-amber-50/70'
               : 'border-emerald-200 bg-emerald-50/70'

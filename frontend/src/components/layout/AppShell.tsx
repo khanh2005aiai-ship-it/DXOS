@@ -4,16 +4,16 @@ import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
 import { useOrganization } from '@/contexts/OrganizationContext';
 import { listNotifications } from '@/api/notifications';
+import { OrganizationAccessBoundary } from './OrganizationAccessBoundary';
 
 export function AppShell() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0);
+  const [unread, setUnread] = useState<{ orgId: string; count: number } | null>(null);
   const { currentOrg } = useOrganization();
 
   // Load unread notification count
   useEffect(() => {
     if (!currentOrg) {
-      setUnreadCount(0);
       return;
     }
     let isCancelled = false;
@@ -23,10 +23,11 @@ export function AppShell() {
       try {
         const response = await listNotifications(orgId, { state: 'unread', limit: 1 });
         if (!isCancelled) {
-          setUnreadCount(response.items.length + (response.nextCursor ? 1 : 0));
+          // This page indicates unread presence; it does not provide an exact total.
+          setUnread({ orgId, count: response.items.length });
         }
       } catch {
-        // Silently fail - notification count is not critical
+        if (!isCancelled) setUnread(null);
       }
     };
     loadUnread();
@@ -37,13 +38,22 @@ export function AppShell() {
     };
   }, [currentOrg]);
 
+  useEffect(() => {
+    const close = (event: KeyboardEvent) => { if (event.key === 'Escape') setSidebarOpen(false); };
+    window.addEventListener('keydown', close);
+    return () => window.removeEventListener('keydown', close);
+  }, []);
+
   return (
-    <div className="fixed inset-0 flex overflow-hidden bg-slate-50">
+    <div className="workspace-shell fixed inset-0 flex overflow-hidden">
+      <a href="#workspace-content" className="workspace-skip-link">Đến nội dung chính</a>
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="flex-1 flex flex-col min-h-0 min-w-0 overflow-hidden">
-        <TopBar onMenuClick={() => setSidebarOpen(true)} unreadCount={unreadCount} />
-        <main className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6">
-          <Outlet />
+        <TopBar onMenuClick={() => setSidebarOpen(true)} sidebarOpen={sidebarOpen} unreadCount={unread?.orgId === currentOrg?.id ? unread?.count ?? 0 : 0} />
+        <main id="workspace-content" tabIndex={-1} className="workspace-content flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 lg:p-8">
+          <div className="mx-auto w-full max-w-[1560px]">
+            <OrganizationAccessBoundary><Outlet /></OrganizationAccessBoundary>
+          </div>
         </main>
       </div>
     </div>
