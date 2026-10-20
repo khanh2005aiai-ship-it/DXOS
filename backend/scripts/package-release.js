@@ -10,7 +10,9 @@ const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 function packageRelease(tag) {
   if (!/^v\d+\.\d+\.\d+(?:-[a-z0-9.-]+)?$/.test(tag)) throw new Error('Explicit semantic version tag required');
   if (git(['status', '--porcelain']).toString().trim()) throw new Error('Working tree must be clean');
-  const commit = git(['rev-parse', tag + '^{commit}']).toString().trim();
+  const ref = 'refs/tags/' + tag;
+  if (git(['cat-file', '-t', ref]).toString().trim() !== 'tag') throw new Error('Annotated tag required');
+  const commit = git(['rev-parse', ref + '^{commit}']).toString().trim();
   if (!/^[a-f0-9]{40}$/.test(commit)) throw new Error('Invalid commit');
   const files = git(['ls-tree', '-r', '--name-only', commit]).toString().trim().split('\n');
   if (files.some(isPrivateOrGeneratedPath)) throw new Error('Private/generated source path refused');
