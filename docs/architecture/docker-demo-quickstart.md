@@ -2,6 +2,8 @@
 
 Dành cho giảng viên/người chấm: không cần cài MySQL host, không cần nhận .env hoặc dữ liệu từ máy tác giả. Cần Docker Engine/Desktop chạy **Linux containers**, Docker Compose v2 hỗ trợ --wait và Node.js 22.21.1 hoặc Node 22 mới hơn. Cần Internet khi build lần đầu, cổng 8090 trống và dung lượng trống cho image/build cache; nên dành ít nhất 8 GB RAM cho Docker và 10 GB ổ đĩa trống.
 
+MySQL demo được build từ backend/deploy/mysql.Dockerfile: server giữ 8.0.44, cập nhật gói Oracle Linux, bỏ MySQL Shell không dùng và biên dịch lại gosu bằng Go đã vá. Container chạy user mysql; không nâng cấp MySQL host hoặc dữ liệu thật.
+
 ## Lấy đúng mã nguồn phát hành
 
 Tại [Releases](https://github.com/nt6175790-afk/DXOS/releases), chọn **v0.1.0**, tải DXOS-v0.1.0-source.zip và SHA256SUMS.txt. Giải nén, mở terminal trong thư mục có package.json. Hoặc dùng:

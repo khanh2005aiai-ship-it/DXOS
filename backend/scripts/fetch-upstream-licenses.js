@@ -4,6 +4,7 @@ const path = require('node:path');
 const { createHash } = require('node:crypto');
 const root = path.resolve(__dirname, '../..');
 const entries = [
+  ['gosu', 'gosu (rebuilt with Go 1.27.2)', '1.19', 'Apache-2.0', 'https://raw.githubusercontent.com/tianon/gosu/6456aaa0f3c854d199d0f037f068eb97515b7513/LICENSE'],
   ['apache-2.0', 'Apache License 2.0', '2.0', 'Apache-2.0', 'https://www.apache.org/licenses/LICENSE-2.0.txt'],
   ['keycloak', 'Keycloak', '26.8.1', 'Apache-2.0', 'https://raw.githubusercontent.com/keycloak/keycloak/26.8.1/LICENSE.txt'],
   ['apisix', 'Apache APISIX', '3.19.0', 'Apache-2.0', 'https://raw.githubusercontent.com/apache/apisix/3.19.0/LICENSE'],

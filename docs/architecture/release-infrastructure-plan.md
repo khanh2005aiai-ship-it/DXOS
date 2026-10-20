@@ -11,3 +11,5 @@ Phạm vi: mã nguồn DX-OS tại tag cố định có thể clone, compile và
 7. Merge PR sau khi các gate đạt; tạo annotated tag v0.1.0 trên commit main đã kiểm chứng. GitHub Release có SHA nguồn, source archive/checksum, hướng dẫn và giới hạn. Không di chuyển tag đã phát hành.
 
 Rollback code bằng tag trước; rollback database bằng backup tương ứng, không tự chạy migrate reset hoặc down -v trên dữ liệu thật. Hạ tầng demo này không truy cập host dx_os và không thay cấu hình ứng dụng đang chạy.
+
+Quét image upstream MySQL 8.0.44 phát hiện HIGH/CRITICAL ở gói OS, Python của MySQL Shell và Go runtime của gosu. Kế hoạch xử lý trước release: tạo image dẫn xuất giữ nguyên server 8.0.44, gỡ Shell không dùng, cập nhật OS nhưng loại trừ mysql*, biên dịch gosu 1.19 từ commit cố định với Go 1.27.2. Assert phiên bản mysqld khi build; CI quét chính image dẫn xuất được chạy, không bỏ qua CVE hoặc hạ severity gate. Không thay server/database trên máy người dùng.

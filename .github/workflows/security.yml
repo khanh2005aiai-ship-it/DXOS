@@ -118,8 +118,9 @@ jobs:
         working-directory: ${{ runner.temp }}/dxos-release-source
         run: |
           mkdir -p security-artifacts
-          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock:ro -v "$PWD/security-artifacts:/out" aquasec/trivy:0.76.0 image --timeout 15m --scanners vuln --format json --output /out/demo-mysql-vulnerabilities.json --severity HIGH,CRITICAL --exit-code 1 mysql:8.0.44@sha256:9c3380eac945af0736031b200027f581925927c81e010056214a4bd6b6693714
-          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock:ro -v "$PWD/security-artifacts:/out" aquasec/trivy:0.76.0 image --timeout 15m --format cyclonedx --output /out/demo-mysql.cdx.json mysql:8.0.44@sha256:9c3380eac945af0736031b200027f581925927c81e010056214a4bd6b6693714
+          mysql_image=$(docker compose -p dxos-ci-demo --env-file .secrets/demo/compose.env -f backend/deploy/compose.demo.yml images -q mysql)
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock:ro -v "$PWD/security-artifacts:/out" aquasec/trivy:0.76.0 image --timeout 15m --scanners vuln --format json --output /out/demo-mysql-vulnerabilities.json --severity HIGH,CRITICAL --exit-code 1 "$mysql_image"
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock:ro -v "$PWD/security-artifacts:/out" aquasec/trivy:0.76.0 image --timeout 15m --format cyclonedx --output /out/demo-mysql.cdx.json "$mysql_image"
       - name: Safe startup diagnostics
         if: failure()
         working-directory: ${{ runner.temp }}/dxos-release-source
