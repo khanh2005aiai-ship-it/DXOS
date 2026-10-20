@@ -114,6 +114,12 @@ jobs:
       - name: Verify migration, seed, login, files and tenant isolation
         working-directory: ${{ runner.temp }}/dxos-release-source
         run: node backend/scripts/test-demo-live.js
+      - name: Audit the isolated demo database image
+        working-directory: ${{ runner.temp }}/dxos-release-source
+        run: |
+          mkdir -p security-artifacts
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock:ro -v "$PWD/security-artifacts:/out" aquasec/trivy:0.76.0 image --timeout 15m --scanners vuln --format json --output /out/demo-mysql-vulnerabilities.json --severity HIGH,CRITICAL --exit-code 1 mysql:8.0.44@sha256:9c3380eac945af0736031b200027f581925927c81e010056214a4bd6b6693714
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock:ro -v "$PWD/security-artifacts:/out" aquasec/trivy:0.76.0 image --timeout 15m --format cyclonedx --output /out/demo-mysql.cdx.json mysql:8.0.44@sha256:9c3380eac945af0736031b200027f581925927c81e010056214a4bd6b6693714
       - name: Safe startup diagnostics
         if: failure()
         working-directory: ${{ runner.temp }}/dxos-release-source
@@ -122,7 +128,7 @@ jobs:
         if: always()
         with:
           name: source-demo-smoke
-          path: ${{ runner.temp }}/dxos-release-source/security-artifacts/demo-smoke.json
+          path: ${{ runner.temp }}/dxos-release-source/security-artifacts/demo-*.json
           if-no-files-found: warn
       - name: Stop isolated demo (runner volumes are disposable)
         if: always()

@@ -22,8 +22,11 @@ try {
   run('Migration status', [prisma, 'migrate', 'status', ...schema]);
   run('Live schema drift', [prisma, 'migrate', 'diff', '--from-schema-datasource', 'database/schema.prisma', '--to-schema-datamodel', 'database/schema.prisma', '--exit-code']);
   const tsx = require.resolve('tsx/cli');
-  run('Demo administrator', [tsx, 'backend/scripts/seed-demo-admin.ts']);
-  run('Demo dataset', [tsx, 'backend/scripts/demo-container-seed.ts']);
+  // Docker starts at /app, unlike npm workspace scripts which start in backend/.
+  // Pin the existing backend compiler config so parameter decorators still work.
+  const tsconfig = ['--tsconfig', 'backend/tsconfig.json'];
+  run('Demo administrator', [tsx, ...tsconfig, 'backend/scripts/seed-demo-admin.ts']);
+  run('Demo dataset', [tsx, ...tsconfig, 'backend/scripts/demo-container-seed.ts']);
   console.log('Demo migration/status/drift/seed PASS. Use the private local demo password to sign in.');
 } catch (error) {
   console.error('Demo bootstrap stopped at a required setup step:', error.message === 'Invalid URL' ? 'database configuration' : error.message);
