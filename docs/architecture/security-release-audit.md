@@ -21,7 +21,7 @@ Không sửa Prisma schema hoặc migration lịch sử. CI replay database tạ
 
 ## Phân tách mạng và giới hạn
 
-Demo bind HTTP trên 127.0.0.1, không public MySQL/backend port; mạng ứng dụng/data nội bộ. Backend/frontend chạy non-root, read-only filesystem với /tmp và private file volume riêng, cap_drop ALL và no-new-privileges. CORS theo cổng demo, reverse proxy cùng origin. Bootstrap fail thì backend không start.
+Demo bind HTTP trên 127.0.0.1, không public MySQL/backend port; mạng ứng dụng/data nội bộ, chỉ frontend có thêm ingress bridge để host truy cập cổng loopback đã publish. Backend/frontend chạy non-root, read-only filesystem với /tmp và private file volume riêng, cap_drop ALL và no-new-privileges. CORS theo cổng demo, reverse proxy cùng origin. Bootstrap fail thì backend không start.
 
 Demo dùng development mode, process-local rate limit, AI mock; SSO/ClamAV/OpenBao không bật ở compose demo đơn giản. Không công khai/tunnel hay đưa dữ liệu thật vào compose này. Upload ở demo không có antivirus. Full security stack riêng vẫn có Valkey shared limit, Keycloak OIDC, ClamAV fail-closed, OpenBao TLS/KV/Raft/agent, APISIX/Coraza; live tích hợp cũ không được giả là đã chạy lại trong lượt release nếu chưa có bằng chứng mới.
 
