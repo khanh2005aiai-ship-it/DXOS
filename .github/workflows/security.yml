@@ -114,6 +114,10 @@ jobs:
       - name: Verify migration, seed, login, files and tenant isolation
         working-directory: ${{ runner.temp }}/dxos-release-source
         run: node backend/scripts/test-demo-live.js
+      - name: Safe startup diagnostics
+        if: failure()
+        working-directory: ${{ runner.temp }}/dxos-release-source
+        run: docker compose -p dxos-ci-demo --env-file .secrets/demo/compose.env -f backend/deploy/compose.demo.yml logs --no-color --tail 40 bootstrap backend frontend
       - uses: actions/upload-artifact@v4
         if: always()
         with:
