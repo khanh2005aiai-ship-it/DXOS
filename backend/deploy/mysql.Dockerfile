@@ -10,7 +10,8 @@ FROM mysql:8.0.44@sha256:9c3380eac945af0736031b200027f581925927c81e010056214a4bd
 # Shell's bundled Python is not required by mysqld, mysql client or the entrypoint.
 # Preserve the exact server version while applying Oracle Linux security fixes.
 RUN microdnf remove -y mysql-shell \
-    && microdnf upgrade -y --exclude='mysql*' \
+    && sed -i '/^\[/a excludepkgs=mysql*' /etc/yum.repos.d/*.repo \
+    && microdnf upgrade -y \
     && microdnf clean all \
     && mysqld --version | grep -E 'Ver 8\.0\.44([ .]|$)'
 COPY --from=gosu-build /out/gosu /usr/local/bin/gosu
