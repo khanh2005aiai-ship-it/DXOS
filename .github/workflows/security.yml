@@ -3,6 +3,7 @@ on:
   pull_request:
   push:
     branches: [main]
+    tags: ["v*"]
   workflow_dispatch:
 permissions:
   contents: read
@@ -32,6 +33,7 @@ jobs:
         with: { node-version: "22.21.1", cache: npm, cache-dependency-path: "package-lock.json" }
       - run: npm ci
       - run: node --test backend/scripts/source-publication-policy.test.js
+      - run: node --test backend/scripts/init-demo-env.test.js
       - run: npm run db:generate && npm run db:validate
       - run: npm run lint:backend
       - run: npm run test:rbac:mysql --workspace @dx-os/backend -- --coverage
@@ -66,9 +68,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: >-
-          docker run --rm -v "$PWD:/work:ro" -w /work aquasec/trivy:0.69.3
+          docker run --rm -v "$PWD:/work:ro" -w /work aquasec/trivy:0.76.0
           fs --scanners vuln,misconfig --severity HIGH,CRITICAL --exit-code 1
-          --skip-dirs outputs --skip-dirs work --skip-dirs .git .
+          --skip-dirs outputs --skip-dirs .git .
       - name: Build selected OSS runtime images
         run: |
           docker build -f backend/deploy/backend.Dockerfile -t dxos-security-backend .
@@ -87,3 +89,52 @@ jobs:
         with:
           name: runtime-sbom-and-scans
           path: security-artifacts/runtime-*
+
+  source-demo:
+    name: Build and run from exact source archive
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22.21.1" }
+      - name: Export only the tested Git revision
+        run: |
+          mkdir -p "$RUNNER_TEMP/dxos-release-source"
+          git archive HEAD | tar -x -C "$RUNNER_TEMP/dxos-release-source"
+      - name: Initialize isolated demo without operator credentials
+        working-directory: ${{ runner.temp }}/dxos-release-source
+        run: |
+          node backend/scripts/init-demo-env.js
+          docker compose -p dxos-ci-demo --env-file .secrets/demo/compose.env -f backend/deploy/compose.demo.yml config --quiet
+      - name: Compile source and start fresh infrastructure
+        working-directory: ${{ runner.temp }}/dxos-release-source
+        run: |
+          docker compose -p dxos-ci-demo --env-file .secrets/demo/compose.env -f backend/deploy/compose.demo.yml build
+          docker compose -p dxos-ci-demo --env-file .secrets/demo/compose.env -f backend/deploy/compose.demo.yml up -d --wait --wait-timeout 240
+      - name: Verify migration, seed, login, files and tenant isolation
+        working-directory: ${{ runner.temp }}/dxos-release-source
+        run: node backend/scripts/test-demo-live.js
+      - name: Audit the isolated demo database image
+        working-directory: ${{ runner.temp }}/dxos-release-source
+        run: |
+          mkdir -p security-artifacts
+          mysql_image=$(docker compose -p dxos-ci-demo --env-file .secrets/demo/compose.env -f backend/deploy/compose.demo.yml images -q mysql)
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock:ro -v "$PWD/security-artifacts:/out" aquasec/trivy:0.76.0 image --timeout 15m --scanners vuln --format json --output /out/demo-mysql-vulnerabilities.json --severity HIGH,CRITICAL --exit-code 1 "$mysql_image"
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock:ro -v "$PWD/security-artifacts:/out" aquasec/trivy:0.76.0 image --timeout 15m --format cyclonedx --output /out/demo-mysql.cdx.json "$mysql_image"
+      - name: Safe startup diagnostics
+        if: failure()
+        working-directory: ${{ runner.temp }}/dxos-release-source
+        run: docker compose -p dxos-ci-demo --env-file .secrets/demo/compose.env -f backend/deploy/compose.demo.yml logs --no-color --tail 40 bootstrap backend frontend
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: source-demo-smoke
+          path: ${{ runner.temp }}/dxos-release-source/security-artifacts/demo-*.json
+          if-no-files-found: warn
+      - name: Stop isolated demo (runner volumes are disposable)
+        if: always()
+        working-directory: ${{ runner.temp }}/dxos-release-source
+        run: |
+          if test -f .secrets/demo/compose.env; then
+            docker compose -p dxos-ci-demo --env-file .secrets/demo/compose.env -f backend/deploy/compose.demo.yml down
+          fi

@@ -18,7 +18,7 @@ for (const file of inventory.stdout.split('\0').filter(Boolean)) {
   mkdirSync(dirname(join(context,file)),{recursive:true}); copyFileSync(join(root,file),join(context,file));
 }
 const common = ['run','--rm','-v','dxos-security_trivy_cache:/cache','-v',artifacts+':/out'];
-const image = 'aquasec/trivy:0.69.3'; let failed = false;
+const image = 'aquasec/trivy:0.76.0'; let failed = false;
 for (const [name,args] of [
   ['filesystem',[...common,'-v',context+':/work:ro','-w','/work',image,'fs','--scanners','vuln,misconfig','--cache-dir','/cache','--timeout','10m','--format','json','--output','/out/trivy-filesystem.json','--severity','HIGH,CRITICAL','--exit-code','1','.']],
   ['backend',[...common,'-v','/var/run/docker.sock:/var/run/docker.sock:ro',image,'image','--cache-dir','/cache','--timeout','10m','--format','json','--output','/out/trivy-backend.json','--severity','HIGH,CRITICAL','--exit-code','1','dxos-security-backend']],

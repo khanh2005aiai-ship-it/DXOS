@@ -1,5 +1,14 @@
 [
   {
+    "component": "gosu (rebuilt with Go 1.27.2)",
+    "version": "1.19",
+    "license": "Apache-2.0",
+    "source": "https://raw.githubusercontent.com/tianon/gosu/6456aaa0f3c854d199d0f037f068eb97515b7513/LICENSE",
+    "file": "infrastructure/gosu.txt",
+    "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "status": "TEXT_COLLECTED"
+  },
+  {
     "component": "Apache License 2.0",
     "version": "2.0",
     "license": "Apache-2.0",
@@ -64,9 +73,9 @@
   },
   {
     "component": "Trivy",
-    "version": "0.69.3",
+    "version": "0.76.0",
     "license": "Apache-2.0",
-    "source": "https://raw.githubusercontent.com/aquasecurity/trivy/v0.69.3/LICENSE",
+    "source": "https://raw.githubusercontent.com/aquasecurity/trivy/v0.76.0/LICENSE",
     "file": "infrastructure/trivy.txt",
     "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
     "status": "TEXT_COLLECTED"

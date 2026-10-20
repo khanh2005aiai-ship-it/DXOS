@@ -4,6 +4,8 @@ Link mã nguồn: https://github.com/nt6175790-afk/DXOS
 
 Đây là hướng dẫn chạy local, chưa có website demo công khai. Link GitHub mở được để đọc/tải mã nguồn; để dùng ứng dụng, cần hoàn tất các bước dưới đây trên chính máy người chấm. Không cần tài khoản hay dữ liệu MySQL từ máy tác giả.
 
+**Có Docker?** Dùng [bộ demo từ source release](docker-demo-quickstart.md) để tự dựng MySQL, migration và dữ liệu mẫu trong container, không cần cài MySQL trên host. Các bước bên dưới dành cho chạy native.
+
 ## 1. Chuẩn bị
 
 - Git, Node.js 22.21.1 hoặc bản Node 22 mới hơn, npm 10 trở lên.
