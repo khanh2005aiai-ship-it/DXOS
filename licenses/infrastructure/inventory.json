@@ -64,9 +64,9 @@
   },
   {
     "component": "Trivy",
-    "version": "0.69.3",
+    "version": "0.76.0",
     "license": "Apache-2.0",
-    "source": "https://raw.githubusercontent.com/aquasecurity/trivy/v0.69.3/LICENSE",
+    "source": "https://raw.githubusercontent.com/aquasecurity/trivy/v0.76.0/LICENSE",
     "file": "infrastructure/trivy.txt",
     "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
     "status": "TEXT_COLLECTED"

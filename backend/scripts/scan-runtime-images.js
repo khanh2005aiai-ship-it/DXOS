@@ -5,7 +5,7 @@ const { spawnSync } = require('node:child_process');
 const root = path.resolve(__dirname, '../..');
 const output = path.join(root, 'security-artifacts'); fs.mkdirSync(output, { recursive: true });
 const services = ['backend', 'frontend', 'keycloak', 'openbao', 'openbao-agent', 'redis', 'clamav', 'apisix', 'waf'];
-const common = ['run', '--rm', '-v', 'dxos-security_trivy_cache:/cache', '-v', output + ':/out', '-v', '/var/run/docker.sock:/var/run/docker.sock:ro', 'aquasec/trivy:0.69.3'];
+const common = ['run', '--rm', '-v', 'dxos-security_trivy_cache:/cache', '-v', output + ':/out', '-v', '/var/run/docker.sock:/var/run/docker.sock:ro', 'aquasec/trivy:0.76.0'];
 const results = [];
 const imagesOnly = process.argv.includes('--images-only');
 // Match the workflow's immutable pull: pulling by digest need not create a tag.

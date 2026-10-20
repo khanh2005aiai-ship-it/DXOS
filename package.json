@@ -17,6 +17,12 @@
     }
   },
   "scripts": {
+    "demo:init": "node backend/scripts/init-demo-env.js",
+    "demo:build": "docker compose --env-file .secrets/demo/compose.env -f backend/deploy/compose.demo.yml build",
+    "demo:up": "docker compose --env-file .secrets/demo/compose.env -f backend/deploy/compose.demo.yml up -d --wait --wait-timeout 240",
+    "demo:down": "docker compose --env-file .secrets/demo/compose.env -f backend/deploy/compose.demo.yml down",
+    "demo:status": "docker compose --env-file .secrets/demo/compose.env -f backend/deploy/compose.demo.yml ps -a",
+    "demo:test": "node backend/scripts/test-demo-live.js",
     "dev:backend": "npm --workspace @dx-os/backend run dev",
     "build:backend": "npm --workspace @dx-os/backend run build",
     "test:backend": "jest --config jest.config.cjs --runInBand",

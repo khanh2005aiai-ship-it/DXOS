@@ -1,0 +1,98 @@
+name: dxos-demo
+
+x-app-environment: &app-environment
+  NODE_ENV: development
+  PORT: "3000"
+  API_PREFIX: api/v1
+  LOG_LEVEL: warn
+  SWAGGER_ENABLED: "false"
+  CORS_ORIGINS: http://localhost:${DEMO_HTTP_PORT:-8090},http://127.0.0.1:${DEMO_HTTP_PORT:-8090}
+  JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:?Run init-demo-env.js first}
+  FILE_STORAGE_ROOT: /data/files
+  AI_PROVIDER: mock
+  AI_MODEL: mock-v1
+  FILE_SCAN_ENABLED: "false"
+  SSO_ENABLED: "false"
+  VAULT_ENABLED: "false"
+
+services:
+  mysql:
+    image: mysql:8.0.44@sha256:9c3380eac945af0736031b200027f581925927c81e010056214a4bd6b6693714
+    environment:
+      MYSQL_DATABASE: dx_os
+      MYSQL_USER: dxos
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Run init-demo-env.js first}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Run init-demo-env.js first}
+    volumes: [demo_mysql:/var/lib/mysql]
+    networks: [data]
+    healthcheck:
+      test: [CMD-SHELL, 'MYSQL_PWD="$${MYSQL_PASSWORD}" mysql --protocol=TCP -h 127.0.0.1 -u dxos dx_os -e "SELECT 1" >/dev/null 2>&1']
+      interval: 5s
+      timeout: 5s
+      retries: 60
+      start_period: 30s
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
+
+  bootstrap:
+    build: { context: ../.., dockerfile: backend/deploy/backend.Dockerfile, target: demo-tools }
+    environment:
+      <<: *app-environment
+      DATABASE_URL: ${DEMO_DATABASE_URL:?Run init-demo-env.js first}
+      DEMO_ADMIN_EMAIL: admin.demo@dxos.local
+      DEMO_ADMIN_PASSWORD: ${DEMO_ADMIN_PASSWORD:?Run init-demo-env.js first}
+    # Preserve the existing localhost-only seed guard; never connect to host dx_os.
+    network_mode: service:mysql
+    depends_on:
+      mysql: { condition: service_healthy }
+    volumes: [demo_files:/data/files]
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    read_only: true
+    tmpfs: [/tmp]
+    restart: "no"
+
+  backend:
+    build: { context: ../.., dockerfile: backend/deploy/backend.Dockerfile }
+    environment:
+      <<: *app-environment
+      DATABASE_URL: ${DATABASE_URL:?Run init-demo-env.js first}
+    depends_on:
+      bootstrap: { condition: service_completed_successfully }
+    volumes: [demo_files:/data/files]
+    networks: [data, app]
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:3000/api/v1/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    read_only: true
+    tmpfs: [/tmp]
+    restart: unless-stopped
+
+  frontend:
+    build: { context: ../.., dockerfile: backend/deploy/frontend.Dockerfile }
+    ports: ["127.0.0.1:${DEMO_HTTP_PORT:-8090}:8080"]
+    volumes: ["./demo/frontend.nginx.conf:/etc/nginx/http.d/default.conf:ro"]
+    networks: [app]
+    depends_on:
+      backend: { condition: service_healthy }
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    read_only: true
+    tmpfs: [/tmp]
+    healthcheck:
+      test: [CMD, wget, -q, -O, /dev/null, http://127.0.0.1:8080/api/v1/health]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    restart: unless-stopped
+
+networks:
+  data: { internal: true }
+  app: { internal: true }
+volumes:
+  demo_mysql: {}
+  demo_files: {}

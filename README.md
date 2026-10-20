@@ -2,6 +2,21 @@
 
 Ứng dụng quản lý doanh nghiệp đa tổ chức, giao diện tiếng Việt. Backend kiểm soát xác thực, quyền và phạm vi dữ liệu của từng tổ chức.
 
+## Bản phát hành và demo cho người chấm
+
+[GitHub Releases](https://github.com/nt6175790-afk/DXOS/releases) lưu phiên bản gắn tag, source zip, commit manifest và SHA-256. Dùng tag **v0.1.0** để lấy đúng mã nguồn release; main có thể thay đổi sau này. Xem [quy trình PR/release](docs/architecture/release-process.md).
+
+Cách dựng nhanh từ source trên máy mới, có Docker Linux containers và Node 22:
+
+```powershell
+npm.cmd run demo:init
+npm.cmd run demo:build
+npm.cmd run demo:up
+npm.cmd run demo:test
+```
+
+Mở **http://localhost:8090**, email **admin.demo@dxos.local**, mật khẩu tự sinh trong **.secrets/demo/compose.env** trên chính máy đó. Bộ này có MySQL riêng và dữ liệu giả lập, không dùng database/credential của máy tác giả. Xem [hướng dẫn Docker đầy đủ](docs/architecture/docker-demo-quickstart.md) trước khi chạy. Đây là demo loopback/offline, chưa có website public và chưa phải production.
+
 ## Chức năng
 
 - Tổng quan, phòng ban, nhân sự, công việc/Kanban, lịch và tìm kiếm.
