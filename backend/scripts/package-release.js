@@ -5,7 +5,8 @@ const { createHash } = require('node:crypto');
 const { execFileSync } = require('node:child_process');
 const { isPrivateOrGeneratedPath } = require('./source-publication-policy');
 const root = path.resolve(__dirname, '../..');
-const git = args => execFileSync('git', args, { cwd: root, maxBuffer: 30 * 1024 * 1024 });
+// Windows core.autocrlf must not rewrite release archive bytes or lockfile hashes.
+const git = args => execFileSync('git', ['-c', 'core.autocrlf=false', '-c', 'core.eol=lf', ...args], { cwd: root, maxBuffer: 30 * 1024 * 1024 });
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 function packageRelease(tag) {
   if (!/^v\d+\.\d+\.\d+(?:-[a-z0-9.-]+)?$/.test(tag)) throw new Error('Explicit semantic version tag required');
