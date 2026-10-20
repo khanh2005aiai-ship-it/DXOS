@@ -6,7 +6,11 @@ function run(label, args) {
   console.log('Demo setup:', label);
   // Do not forward subprocess output: it may contain connection strings.
   const result = spawnSync(process.execPath, args, { cwd: root, env: process.env, stdio: 'pipe', maxBuffer: 20 * 1024 * 1024 });
-  if (result.status !== 0) throw new Error(label);
+  if (result.status !== 0) {
+    const safe = (result.stderr?.toString() ?? '').split(/\r?\n/).filter(line => /^[A-Z_]+(?: [A-Za-z]+ [A-Z0-9_]+)?$/.test(line));
+    for (const code of safe) console.error(code);
+    throw new Error(label);
+  }
 }
 try {
   const url = new URL(process.env.DATABASE_URL ?? '');
@@ -19,7 +23,7 @@ try {
   run('Live schema drift', [prisma, 'migrate', 'diff', '--from-schema-datasource', 'database/schema.prisma', '--to-schema-datamodel', 'database/schema.prisma', '--exit-code']);
   const tsx = require.resolve('tsx/cli');
   run('Demo administrator', [tsx, 'backend/scripts/seed-demo-admin.ts']);
-  run('Demo dataset', [tsx, 'backend/scripts/seed-demo.ts']);
+  run('Demo dataset', [tsx, 'backend/scripts/demo-container-seed.ts']);
   console.log('Demo migration/status/drift/seed PASS. Use the private local demo password to sign in.');
 } catch (error) {
   console.error('Demo bootstrap stopped at a required setup step:', error.message === 'Invalid URL' ? 'database configuration' : error.message);
