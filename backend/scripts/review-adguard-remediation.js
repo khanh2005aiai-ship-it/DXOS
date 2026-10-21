@@ -4,6 +4,7 @@ const crypto = require('node:crypto');
 const { reviewReports, verifyDatabase } = require('./check-adguard-artifact');
 const upstream = '05ba17b282da1c4393d6a4ba4db0cf519194a362';
 const expected = Object.freeze({
+  'github.com/insomniacslk/dhcp': 'v0.0.0-20260719225207-c76316d4aa82',
   'golang.org/x/crypto': 'v0.57.0', 'golang.org/x/net': 'v0.60.0',
   'golang.org/x/text': 'v0.42.0', 'golang.org/x/sys': 'v0.48.0', 'golang.org/x/term': 'v0.46.0',
   // Required by x/text v0.42.0 and x/tools v0.49.0; verified against proxy .mod files.
@@ -14,7 +15,7 @@ function parseModules(text) {
   return new Map([...text.matchAll(/^\s*([\w.-]+(?:\/[\w.-]+)+)\s+(v[^\s]+)(?:\s|$)/gm)].map(m => [m[1], m[2]]));
 }
 function validateDelta(before, after) {
-  if (!/^go 1\.26\.9$/m.test(after)) throw Error('UNEXPECTED_GO_DIRECTIVE');
+  if (!/^go 1\.26\.10$/m.test(after)) throw Error('UNEXPECTED_GO_DIRECTIVE');
   const old = parseModules(before), next = parseModules(after);
   for (const name of new Set([...old.keys(), ...next.keys()])) {
     if (old.get(name) !== next.get(name) && (!Object.hasOwn(expected, name) || next.get(name) !== expected[name])) throw Error('UNAPPROVED_DEPENDENCY_CHANGE');
@@ -25,13 +26,13 @@ function validateBuild(scan, sbom, imports) {
   const r = reviewReports(scan, sbom);
   const packages = scan.Results.find(x => x.Type === 'gobinary').Packages;
   const versions = new Map(packages.map(p => [p.Name, p.Version]));
-  if (versions.get('stdlib') !== 'v1.26.9') throw Error('UNEXPECTED_BINARY_TOOLCHAIN');
+  if (versions.get('stdlib') !== 'v1.26.10') throw Error('UNEXPECTED_BINARY_TOOLCHAIN');
   // x/term need not be linked in the production binary, but is pinned in go.mod.
-  for (const name of ['golang.org/x/crypto', 'golang.org/x/net', 'golang.org/x/text', 'golang.org/x/sys']) if (versions.get(name) !== expected[name]) throw Error('UNPATCHED_BINARY_DEPENDENCY');
+  for (const name of ['github.com/insomniacslk/dhcp', 'golang.org/x/crypto', 'golang.org/x/net', 'golang.org/x/text', 'golang.org/x/sys']) if (versions.get(name) !== expected[name]) throw Error('UNPATCHED_BINARY_DEPENDENCY');
   const deps = imports.split(/\r?\n/).filter(Boolean);
   if (!deps.includes('github.com/AdguardTeam/AdGuardHome') || !deps.includes('net/http')) throw Error('INCOMPLETE_PRODUCTION_IMPORT_GRAPH');
   if (deps.some(p => p === 'golang.org/x/crypto/openpgp' || p.startsWith('golang.org/x/crypto/openpgp/'))) throw Error('UNSAFE_OPENPGP_IS_LINKED');
-  return { ...r, productionOpenPgpImport: false, toolchain: 'go1.26.9' };
+  return { ...r, productionOpenPgpImport: false, toolchain: 'go1.26.10' };
 }
 const sha = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 function main() {
