@@ -1,4 +1,4 @@
-FROM golang:1.27.2-alpine AS build
+FROM golang:1.27.3-alpine@sha256:f2c872bcee949b7be9c490efd02b48a8a2fbf947cdf533f1c58525ec9d8170fd AS build
 RUN apk add --no-cache git ca-certificates
 RUN git clone --depth 1 --branch v2.7.1 https://github.com/openbao/openbao.git /src \
     && test "$(git -C /src rev-parse HEAD)" = a5db72cef75c24b920ade02065b18dd8eb666bac

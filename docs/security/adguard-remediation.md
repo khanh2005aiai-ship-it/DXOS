@@ -22,4 +22,6 @@ Lần rebuild với Go 1.26.9 đã qua 2.004 test/31 package nhưng bị govulnc
 
 Implementation/scan rebuild: **PENDING** cho đến khi CI đúng revision có artifact và bằng chứng. Chữ ký của bản chính thức không được dùng để chứng nhận binary đã sửa. Các case DNS lab, tenant API, restore/failover và review độc lập chưa được thực hiện bởi tài liệu này.
 
+Trong regression, CVE-2026-111943 cũng được xác nhận ở `gosu` của image MySQL (stdlib Go 1.27.2). Các builder gosu/OpenBao/Coraza-Caddy còn dùng Go 1.27.2 được nâng bản vá compiler lên 1.27.3 trước khi quét lại. Giữ MySQL 8.0.44, các source commit/version của helper, runtime base, schema và migration; không sửa authentication/RBAC. Đây là cập nhật bảo mật toolchain liên quan advisory TLS vừa phát hiện, không phải nâng phiên bản database.
+
 Nguồn: [stable release](https://github.com/AdguardTeam/AdGuardHome/releases/tag/v0.107.79), [Go HTTP/2 advisory](https://pkg.go.dev/vuln/GO-2026-6611), [OpenPGP advisory](https://pkg.go.dev/vuln/GO-2026-5932), [Go releases](https://go.dev/dl/).

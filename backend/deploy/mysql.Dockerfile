@@ -1,4 +1,4 @@
-FROM golang:1.27.2-alpine AS gosu-build
+FROM golang:1.27.3-alpine@sha256:f2c872bcee949b7be9c490efd02b48a8a2fbf947cdf533f1c58525ec9d8170fd AS gosu-build
 RUN apk add --no-cache git ca-certificates
 RUN git clone --depth 1 --branch 1.19 https://github.com/tianon/gosu.git /src \
     && test "$(git -C /src rev-parse HEAD)" = 6456aaa0f3c854d199d0f037f068eb97515b7513
