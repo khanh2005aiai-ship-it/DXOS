@@ -1,0 +1,199 @@
+{
+  "checkedAt": "2026-10-21T05:47:43.996Z",
+  "candidate": {
+    "version": "v0.107.79",
+    "platform": "linux/amd64",
+    "commit": "05ba17b282da1c4393d6a4ba4db0cf519194a362",
+    "archiveSha256": "c48f4a43000665484c5ec28177de11a004759b620dae8f77b2aabefc9ef3687f",
+    "binarySha256": "7e247573e63ce771a5925d16ca4ca9344e6e888673244289dc302f0fdfdfbf4e",
+    "signingFingerprint": "28645AC9776EC4C00BCE2AFC0FE641E7235E2EC6",
+    "scannerVersion": "0.76.0"
+  },
+  "database": {
+    "schema": 2,
+    "updatedAt": "2026-10-21T01:19:53.032404989Z",
+    "downloadedAt": "2026-10-21T05:40:55.0396933Z"
+  },
+  "signature": "VALID_PINNED_FINGERPRINT",
+  "status": "FAIL",
+  "counts": {
+    "UNKNOWN": 1,
+    "LOW": 1,
+    "MEDIUM": 15,
+    "HIGH": 6,
+    "CRITICAL": 0
+  },
+  "packageCount": 50,
+  "sbomComponents": 51,
+  "findings": [
+    {
+      "id": "CVE-2026-56851",
+      "severity": "HIGH",
+      "package": "golang.org/x/text",
+      "installed": "v0.40.0",
+      "fixed": "0.41.0"
+    },
+    {
+      "id": "CVE-2026-56854",
+      "severity": "HIGH",
+      "package": "golang.org/x/crypto",
+      "installed": "v0.54.0",
+      "fixed": "0.55.0"
+    },
+    {
+      "id": "CVE-2026-56855",
+      "severity": "MEDIUM",
+      "package": "golang.org/x/crypto",
+      "installed": "v0.54.0",
+      "fixed": "0.56.0"
+    },
+    {
+      "id": "CVE-2026-56857",
+      "severity": "LOW",
+      "package": "stdlib",
+      "installed": "v1.26.6",
+      "fixed": "1.26.9, 1.27.2"
+    },
+    {
+      "id": "CVE-2026-56866",
+      "severity": "MEDIUM",
+      "package": "stdlib",
+      "installed": "v1.26.6",
+      "fixed": "1.26.9, 1.27.2"
+    },
+    {
+      "id": "CVE-2026-78659",
+      "severity": "MEDIUM",
+      "package": "golang.org/x/net",
+      "installed": "v0.57.0",
+      "fixed": "0.60.0"
+    },
+    {
+      "id": "CVE-2026-78659",
+      "severity": "MEDIUM",
+      "package": "stdlib",
+      "installed": "v1.26.6",
+      "fixed": "1.26.9, 1.27.2"
+    },
+    {
+      "id": "CVE-2026-78660",
+      "severity": "MEDIUM",
+      "package": "golang.org/x/net",
+      "installed": "v0.57.0",
+      "fixed": "0.60.0"
+    },
+    {
+      "id": "CVE-2026-78660",
+      "severity": "MEDIUM",
+      "package": "stdlib",
+      "installed": "v1.26.6",
+      "fixed": "1.26.9, 1.27.2"
+    },
+    {
+      "id": "CVE-2026-78662",
+      "severity": "MEDIUM",
+      "package": "golang.org/x/crypto",
+      "installed": "v0.54.0",
+      "fixed": "0.56.0"
+    },
+    {
+      "id": "CVE-2026-78663",
+      "severity": "MEDIUM",
+      "package": "golang.org/x/net",
+      "installed": "v0.57.0",
+      "fixed": "0.60.0"
+    },
+    {
+      "id": "CVE-2026-78663",
+      "severity": "MEDIUM",
+      "package": "stdlib",
+      "installed": "v1.26.6",
+      "fixed": "1.26.9, 1.27.2"
+    },
+    {
+      "id": "CVE-2026-78667",
+      "severity": "HIGH",
+      "package": "stdlib",
+      "installed": "v1.26.6",
+      "fixed": "1.26.9, 1.27.2"
+    },
+    {
+      "id": "CVE-2026-78669",
+      "severity": "HIGH",
+      "package": "golang.org/x/net",
+      "installed": "v0.57.0",
+      "fixed": "0.60.0"
+    },
+    {
+      "id": "CVE-2026-78669",
+      "severity": "HIGH",
+      "package": "stdlib",
+      "installed": "v1.26.6",
+      "fixed": "1.26.9, 1.27.2"
+    },
+    {
+      "id": "CVE-2026-94439",
+      "severity": "MEDIUM",
+      "package": "stdlib",
+      "installed": "v1.26.6",
+      "fixed": "1.26.9, 1.27.2"
+    },
+    {
+      "id": "CVE-2026-94440",
+      "severity": "MEDIUM",
+      "package": "stdlib",
+      "installed": "v1.26.6",
+      "fixed": "1.26.9, 1.27.2"
+    },
+    {
+      "id": "CVE-2026-94448",
+      "severity": "MEDIUM",
+      "package": "stdlib",
+      "installed": "v1.26.6",
+      "fixed": "1.26.9, 1.27.2"
+    },
+    {
+      "id": "CVE-2026-97030",
+      "severity": "MEDIUM",
+      "package": "stdlib",
+      "installed": "v1.26.6",
+      "fixed": "1.26.9, 1.27.2"
+    },
+    {
+      "id": "CVE-2026-97031",
+      "severity": "HIGH",
+      "package": "stdlib",
+      "installed": "v1.26.6",
+      "fixed": "1.26.9, 1.27.2"
+    },
+    {
+      "id": "CVE-2026-97032",
+      "severity": "MEDIUM",
+      "package": "golang.org/x/net",
+      "installed": "v0.57.0",
+      "fixed": "0.60.0"
+    },
+    {
+      "id": "CVE-2026-97032",
+      "severity": "MEDIUM",
+      "package": "stdlib",
+      "installed": "v1.26.6",
+      "fixed": "1.26.9, 1.27.2"
+    },
+    {
+      "id": "GO-2026-5932",
+      "severity": "UNKNOWN",
+      "package": "golang.org/x/crypto",
+      "installed": "v0.54.0",
+      "fixed": null
+    }
+  ],
+  "scope": "Official Linux binary Go dependencies only; no OS/container scan, exploitability proof, DNS live test or tenant adapter test.",
+  "dxosBaseRevision": "ab75bb33b5e850bfd869cc3b13b5071327fa13f7",
+  "reviewer": "PENDING_INDEPENDENT_REVIEW",
+  "evidence": {
+    "rawSbomSha256": "39f59928e4083985cf8cb3958515bb0ee89f8158a1f17f55d0e80add54545bcb",
+    "publishedSbomSha256": "21e2141e66bf631388e053b560143bff22ee97c76de41b7104b2dbfd854f8a20",
+    "normalization": "Only metadata.component.name replaced to remove local absolute path; package inventory unchanged."
+  }
+}
