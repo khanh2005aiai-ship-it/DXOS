@@ -1,0 +1,53 @@
+{
+  "checkedAt": "2026-10-21T08:09:08.203Z",
+  "buildType": "DXOS_REBUILD_NOT_UPSTREAM_SIGNED",
+  "build": {
+    "upstream": "05ba17b282da1c4393d6a4ba4db0cf519194a362",
+    "version": "v0.107.79-dxos.1",
+    "platform": "linux/amd64",
+    "go": "go1.26.10",
+    "reproducible": true,
+    "reproducibilityScope": "Two builds on the same isolated runner; symbol table retained for binary vulnerability analysis",
+    "binarySha256": "764607a27ba4bfa6eda27a0a9123e58cc88fb1de3df28f7339e2c9bee82962d6",
+    "dxosHead": "0899b9d20758739ec8d2a68f3c0780af1a3a768e",
+    "workflowRevision": "e288d7bafd6da202acb5cb189446c2e38d767896",
+    "runUrl": "https://github.com/nt6175790-afk/DXOS/actions/runs/39566871471",
+    "frontendSha256": "30184c157d4aefe5371b575a43c0ab5a7314aef039a820cc421ea67bab994ce8",
+    "signature": "NOT_UPSTREAM_SIGNED"
+  },
+  "database": {
+    "schema": 2,
+    "updatedAt": "2026-10-21T07:13:45.702547343Z",
+    "downloadedAt": "2026-10-21T08:09:07.887311912Z"
+  },
+  "status": "PASS",
+  "counts": {
+    "UNKNOWN": 1,
+    "LOW": 0,
+    "MEDIUM": 1,
+    "HIGH": 0,
+    "CRITICAL": 0
+  },
+  "packageCount": 50,
+  "sbomComponents": 51,
+  "findings": [
+    {
+      "id": "CVE-2022-32175",
+      "severity": "MEDIUM",
+      "package": "github.com/AdguardTeam/AdGuardHome",
+      "installed": "v0.107.79-dxos.1",
+      "fixed": "0.108.0-b.16"
+    },
+    {
+      "id": "GO-2026-5932",
+      "severity": "UNKNOWN",
+      "package": "golang.org/x/crypto",
+      "installed": "v0.57.0",
+      "fixed": null
+    }
+  ],
+  "productionOpenPgpImport": false,
+  "toolchain": "go1.26.10",
+  "unknownAdvisory": "GO-2026-5932 remains visible in module scan; affected openpgp packages absent from production import graph. No ignore/VEX suppression.",
+  "scope": "Dependency remediation for Linux amd64 candidate; no production, network-policy, tenant-adapter or license-clearance approval."
+}

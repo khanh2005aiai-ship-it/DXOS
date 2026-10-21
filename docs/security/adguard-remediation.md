@@ -20,8 +20,21 @@ Lần rebuild với Go 1.26.9 đã qua 2.004 test/31 package nhưng bị govulnc
 
 ## Trạng thái
 
-Implementation/scan rebuild: **PENDING** cho đến khi CI đúng revision có artifact và bằng chứng. Chữ ký của bản chính thức không được dùng để chứng nhận binary đã sửa. Các case DNS lab, tenant API, restore/failover và review độc lập chưa được thực hiện bởi tài liệu này.
+**EXECUTED / VERIFIED BY CI: PASS cho gate vá dependency HIGH/CRITICAL.** [Workflow rebuild](https://github.com/nt6175790-afk/DXOS/actions/runs/39566871471) chạy đúng source DX-OS `0899b9d20758739ec8d2a68f3c0780af1a3a768e` đã thành công. Các thay đổi sau revision này ở báo cáo hoặc compiler image khác không sửa recipe/binary AdGuard đã kiểm chứng. Chữ ký của bản chính thức không được dùng để chứng nhận binary đã sửa. Các case DNS lab, tenant API, restore/failover và review độc lập chưa được thực hiện bởi tài liệu này.
 
 Trong regression, CVE-2026-111943 cũng được xác nhận ở `gosu` của image MySQL (stdlib Go 1.27.2). Các builder gosu/OpenBao/Coraza-Caddy còn dùng Go 1.27.2 được nâng bản vá compiler lên 1.27.3 trước khi quét lại. Giữ MySQL 8.0.44, các source commit/version của helper, runtime base, schema và migration; không sửa authentication/RBAC. Đây là cập nhật bảo mật toolchain liên quan advisory TLS vừa phát hiện, không phải nâng phiên bản database.
+
+## Bằng chứng của candidate đã vá
+
+- 2.004 upstream tests / 31 packages: PASS. Verifier/gate unit tests: 18/18 PASS.
+- Hai lần build trên cùng runner có cùng SHA-256; CLI xác nhận `v0.107.79-dxos.1`. Không suy thành reproducibility trên mọi máy/OS.
+- Binary SHA-256: `764607a27ba4bfa6eda27a0a9123e58cc88fb1de3df28f7339e2c9bee82962d6`.
+- Trivy 0.76.0, CVE DB cập nhật `2026-10-21T07:13:45.702547343Z`: **0 HIGH, 0 CRITICAL, 1 MEDIUM, 1 UNKNOWN**; 50 packages / 51 CycloneDX components. Xem [review JSON](adguard-v0.107.79-dxos.1-review.json) và [SBOM](adguard-v0.107.79-dxos.1.cdx.json). Không suppress/ignore bất kỳ finding nào.
+- Govulncheck trên binary đủ symbol và source: **0 affected vulnerabilities**, 0 affected imported packages; còn 1 module advisory không có lời gọi được phát hiện. Production import graph không có `x/crypto/openpgp`; UNKNOWN GO-2026-5932 vẫn được giữ trong module scan.
+- MEDIUM CVE-2022-32175 được scanner gán cho main module theo version range `<0.108.0-b.16`. Không đổi version giả để tránh advisory. Source/changelog v0.107.79 đã ghi nhận các kiểm soát CSRF (SameSite Lax, bỏ plain-text APIs, JSON Content-Type); riêng đánh giá khả năng khai thác MEDIUM trên topology thực chưa được nghiệm thu. Không gọi candidate là zero-vulnerability hoặc production-ready.
+- [Artifact binary cùng corresponding source/notices](https://github.com/nt6175790-afk/DXOS/actions/runs/39566871471/artifacts/12330601298), retention CI 14 ngày. ZIP SHA-256: `dc170dc6d61f01aabe95f8b625dd34520394121ddefddec7552eb5370afe253c`. Đã tải bằng API và đối chiếu checksum từng file; không commit binary/source archive hoặc tải lên release production.
+- Frontend asset upstream giữ nguyên checksum đã ghim. Mã frontend DX-OS, database/schema/migration, API contracts, DNS/router/DHCP/firewall/ACL và credential không bị thay đổi.
+
+Artifact là **Linux amd64**, không chạy trực tiếp trên Windows. Giữ binary, corresponding-source archive, LICENSE, DXOS-CHANGES, reports và SHA256SUMS cùng nhau khi bàn giao. Không dùng GPG signature của bản gốc để xác minh bản rebuild. Theo thời gian retention, phải dựng lại/scan lại trước lần sử dụng sau; không mặc định advisory database mãi giữ nguyên.
 
 Nguồn: [stable release](https://github.com/AdguardTeam/AdGuardHome/releases/tag/v0.107.79), [Go HTTP/2 advisory](https://pkg.go.dev/vuln/GO-2026-6611), [OpenPGP advisory](https://pkg.go.dev/vuln/GO-2026-5932), [Go releases](https://go.dev/dl/).

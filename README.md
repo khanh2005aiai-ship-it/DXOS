@@ -31,6 +31,8 @@ Mở **http://localhost:8090**, email **admin.demo@dxos.local**, mật khẩu t�
 
 [Đánh giá tích hợp AdGuard](docs/architecture/adguard-integration-assessment.md) gồm ranh giới DNS/ứng dụng, tenant isolation, giấy phép và quyết định GO/NO-GO. Có [runbook hạ tầng](docs/architecture/adguard-infrastructure-runbook.md), [security review](docs/architecture/adguard-security-review.md), [24 case nghiệm thu dự kiến](docs/architecture/adguard-validation-plan.md) và [bàn giao công việc](docs/team/adguard-work-plan.md). Đây là thiết kế/tài liệu, **chưa có AdGuard runtime hoặc API trong DX-OS**, không thay bộ demo v0.1.0 đã phát hành.
 
+[Bản vá candidate AdGuard v0.107.79-dxos.1](docs/security/adguard-remediation.md) đã qua rebuild/test/scan riêng với 0 HIGH/CRITICAL, có binary Linux amd64 cùng corresponding source và SBOM. Còn 1 MEDIUM và 1 UNKNOWN được giữ hiển thị, chưa phê duyệt production hoặc kết nối tenant API. Bản chính thức cũ và bản rebuild có hash/provenance khác nhau; không dùng chữ ký upstream cho binary đã sửa.
+
 ## Công nghệ và cấu trúc
 
 Node.js 22.21.1 trở lên · NestJS · React 18/Vite/TypeScript · MySQL Community 8.0.44 · Prisma 6.19.3.

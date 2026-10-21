@@ -1,5 +1,7 @@
 # Kiểm chứng bảo mật artifact AdGuard Home
 
+Cập nhật: binary chính thức được mô tả dưới đây vẫn bị từ chối. [Bản rebuild riêng v0.107.79-dxos.1](adguard-remediation.md) đã có bằng chứng 0 HIGH/CRITICAL; đó là artifact khác với hash/provenance riêng, không phải sửa số liệu của bản gốc hoặc phê duyệt production.
+
 Ngày 21/10/2026. Phần việc bảo mật được thực hiện theo ủy quyền của chủ dự án và bàn giao qua fork/PR của thành viên. **Chưa có reviewer độc lập**; không coi tài khoản tạo commit là bằng chứng thành viên đã tự chạy hoặc review các bài thử.
 
 **Kết luận: NO-GO cho artifact v0.107.79 Linux amd64.** Xác minh nguồn và chữ ký đạt, nhưng quét dependency có 6 phát hiện HIGH (5 CVE phân biệt), 0 CRITICAL, 15 MEDIUM, 1 LOW và 1 UNKNOWN. Không suppress/ignore các phát hiện để đạt gate. Đây là kiểm chứng một binary công khai, không phải triển khai AdGuard hay kiểm thử tenant API.
