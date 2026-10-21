@@ -25,6 +25,10 @@ Mở **http://localhost:8090**, email **admin.demo@dxos.local**, mật khẩu t�
 - Quản trị thành viên/vai trò và trợ lý AI (mock offline hoặc provider cấu hình riêng).
 - Demo bảo mật: Keycloak SSO, APISIX, Coraza WAF, ClamAV, OpenBao và Valkey.
 
+### Đánh giá AdGuard và phần hạ tầng bổ sung
+
+[Đánh giá tích hợp AdGuard](docs/architecture/adguard-integration-assessment.md) gồm ranh giới DNS/ứng dụng, tenant isolation, giấy phép và quyết định GO/NO-GO. Có [runbook hạ tầng](docs/architecture/adguard-infrastructure-runbook.md), [security review](docs/architecture/adguard-security-review.md), [24 case nghiệm thu dự kiến](docs/architecture/adguard-validation-plan.md) và [bàn giao công việc](docs/team/adguard-work-plan.md). Đây là thiết kế/tài liệu, **chưa có AdGuard runtime hoặc API trong DX-OS**, không thay bộ demo v0.1.0 đã phát hành.
+
 ## Công nghệ và cấu trúc
 
 Node.js 22.21.1 trở lên · NestJS · React 18/Vite/TypeScript · MySQL Community 8.0.44 · Prisma 6.19.3.
