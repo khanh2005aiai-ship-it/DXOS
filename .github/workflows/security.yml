@@ -45,6 +45,8 @@ jobs:
       - run: npm audit --omit=dev --audit-level=high
       - run: npm ci && npm run lint && npm test && npm run build && npm audit --omit=dev --audit-level=high
         working-directory: frontend
+      - name: Verify redirect dependency credential boundaries
+        run: node --test backend/scripts/redirect-dependency-security.test.js
       - name: Collect notices for actual Linux installation
         run: |
           node backend/scripts/collect-license-notices.js --fetch-missing

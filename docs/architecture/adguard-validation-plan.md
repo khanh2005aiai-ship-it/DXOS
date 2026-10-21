@@ -1,6 +1,6 @@
 # Kế hoạch nghiệm thu AdGuard
 
-Trạng thái: **PLANNED / NOT EXECUTED** cho tất cả case dưới đây. Đây là test plan cho bước triển khai tương lai, không phải báo cáo đã kiểm thử. PR hiện tại chỉ thay tài liệu; kết quả CI của PR/tag phải đọc riêng và không thay thế test AdGuard.
+Trạng thái: **PLANNED / NOT EXECUTED** cho tất cả case dưới đây. Đây là test plan cho bước triển khai tương lai, không phải báo cáo đã kiểm thử. Phần AdGuard trong PR là tài liệu; PR đồng thời vá dependency follow-redirects của frontend khi quét lại phát hiện cảnh báo. Kết quả CI của PR/tag phải đọc riêng và không thay thế test AdGuard.
 
 ## Gate 1: artifact và lab DNS
 

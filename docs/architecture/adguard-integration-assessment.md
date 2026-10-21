@@ -8,6 +8,8 @@ Ngày đánh giá: 21/10/2026. Trạng thái: **chấp nhận thiết kế cho P
 
 Lượt này hoàn thiện **đánh giá và thiết kế**, đúng phạm vi hạ tầng bằng tài liệu. Không cài DNS/service, thay router/firewall/DHCP hoặc đưa AdGuard thành dependency của demo v0.1.0. Không bổ sung endpoint, permission, bảng dữ liệu hay migration. Các kiểm thử AdGuard live trong [kế hoạch nghiệm thu](adguard-validation-plan.md) chưa được thực thi.
 
+Ngoài phần AdGuard, lượt quét ngày 21/10 phát hiện CVE-2026-111755/CVE-2026-111756 ở follow-redirects 1.16.0 trong frontend lockfile. Kế hoạch vá: cập nhật riêng transitive dependency lên 1.16.1 trong range Axios đang dùng, không sửa UI/API; chạy lại regression và security gates. Xem [ghi nhận bản vá](../security/follow-redirects-2026-10-21.md). Không bỏ qua cảnh báo để giữ PR chỉ có tài liệu.
+
 ## 2. Lựa chọn thành phần
 
 Chọn **AdGuard Home** để đánh giá: dịch vụ lọc DNS có API quản trị. Không đồng nhất nó với mọi repository của AdGuardTeam, extension trình duyệt hoặc dịch vụ DNS thương mại. Phiên bản tham chiếu trong tài liệu nhóm là v0.107.78; GitHub API chính thức trả latest stable **v0.107.79** lúc kiểm tra 21/10/2026. Đây là ứng viên đánh giá, **không phải phiên bản đã được DX-OS duyệt bảo mật**. Khi triển khai phải chốt lại version, commit, checksum/signature và image digest; không dùng latest/beta/edge.

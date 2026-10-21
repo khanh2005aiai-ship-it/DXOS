@@ -6,6 +6,8 @@
 
 [GitHub Releases](https://github.com/nt6175790-afk/DXOS/releases) lưu phiên bản gắn tag, source zip, commit manifest và SHA-256. Dùng tag **v0.1.0** để lấy đúng mã nguồn release; main có thể thay đổi sau này. Xem [quy trình PR/release](docs/architecture/release-process.md).
 
+**Cập nhật bảo mật 21/10/2026:** v0.1.0 chứa follow-redirects 1.16.0 trong frontend lockfile, vừa được scanner báo hai HIGH. Bản vá 1.16.1 được xử lý trong [PR #15](https://github.com/nt6175790-afk/DXOS/pull/15); khi dựng bản mới, chọn revision đã vá và đã qua CI. Tag/asset v0.1.0 giữ nguyên để truy xuất; không coi bản cũ là đã có bản vá. Xem [chi tiết và phạm vi ảnh hưởng](docs/security/follow-redirects-2026-10-21.md).
+
 Cách dựng nhanh từ source trên máy mới, có Docker Linux containers và Node 22:
 
 ```powershell

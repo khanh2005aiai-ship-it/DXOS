@@ -12,6 +12,7 @@ Ngày: 21/10/2026. Chủ repository yêu cầu thực hiện tập trung phần 
 | Rà bảo mật, dữ liệu, giấy phép và tenant | [Security review](../architecture/adguard-security-review.md) | DONE review thiết kế; chưa duyệt artifact triển khai |
 | Chuẩn bị nghiệm thu | [24 case có kỳ vọng cụ thể](../architecture/adguard-validation-plan.md) | DONE kế hoạch; test AdGuard NOT_EXECUTED |
 | Quét/test bản DX-OS hiện có | [CI release v0.1.0](https://github.com/nt6175790-afk/DXOS/actions/runs/39447966497) và CI đúng revision PR hiện tại | Baseline có bằng chứng; không gọi là scan AdGuard |
+| Xử lý cảnh báo phát hiện khi quét lại | [Bản vá follow-redirects](../security/follow-redirects-2026-10-21.md), lockfile 1.16.1 | Bản vá có trong nhánh; kết quả cuối theo CI PR |
 | Nhánh/commit/PR | `feat/adguard-integration-assessment` vào main | Xem PR/commit thực tế trên GitHub |
 | Hai thành viên cập nhật GitHub bằng tài khoản riêng mỗi tuần | Commit/PR có nội dung thực của từng người | Chưa được thay thế bởi lượt thực hiện tập trung này |
 
