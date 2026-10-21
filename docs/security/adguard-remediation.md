@@ -8,6 +8,8 @@ Upstream chưa có stable mới hơn v0.107.79 tại thời điểm kiểm tra. 
 
 Bản build có tên riêng **v0.107.79-dxos.1**, channel candidate. Đây là bản sửa dependency của DX-OS, **không phải release/chữ ký chính thức AdGuard**. Giữ verifier cũ để artifact chính thức còn lỗi tiếp tục bị từ chối. Chỉ chấp nhận ứng viên rebuild khi test upstream, hai lần build cùng hash, CLI version, inventory/version assertions, quét HIGH/CRITICAL, SBOM và govulncheck đều đạt.
 
+Dependency closure đã đối chiếu thêm: x/text v0.42.0 yêu cầu x/tools v0.49.0, x/mod v0.41.0 và x/sync v0.23.0; x/tools yêu cầu x/telemetry `v0.0.0-20260811182544-a038080d80e5`. Allowlist ghim đúng các bản này, không cho phép module khác tự nâng/hạ/xóa. Không chạy tidy để dọn manifest ngoài phạm vi; test/build dùng `-mod=readonly`. Các module/tooling không mặc định được coi là nằm trong production binary.
+
 Asset frontend upstream cùng v0.107.79 được giữ nguyên, ghim SHA-256 `30184c157d4aefe5371b575a43c0ab5a7314aef039a820cc421ea67bab994ce8`; không thay giao diện. Build trên runner tạm, chỉ contents:read, không dùng secret hoặc dữ liệu thật. Không chạy service DNS trên máy người dùng và không thay router/DHCP/firewall/ACL.
 
 Source/patch, go.mod/go.sum, build recipe, provenance, SBOM và báo cáo phải đi cùng artifact. Bản phân phối giữ LICENSE GPL v3 và notices upstream, có ghi nhận thay đổi; không đổi nhãn sang Apache-2.0 của DX-OS. Bản source kèm vendor Go dependencies và source stdlib để tái dựng; client sources và asset frontend vẫn giữ trong source. Rà giấy phép toàn bộ bản phân phối và các gate vận hành vẫn là điều kiện riêng, không đồng nhất zero HIGH với production-ready.

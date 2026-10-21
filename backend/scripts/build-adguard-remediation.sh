@@ -14,7 +14,7 @@ export GOPROXY=https://proxy.golang.org GOSUMDB=sum.golang.org
 cp go.mod go.mod.original
 go mod edit -go=1.26.9
 go get golang.org/x/crypto@v0.57.0 golang.org/x/net@v0.60.0 golang.org/x/text@v0.42.0
-go mod tidy
+git diff -- go.mod go.sum > "$reports/dependency.patch"
 node "$project_root/backend/scripts/review-adguard-remediation.js" delta "$source_dir"
 go mod verify
 git diff --exit-code -- . ':!go.mod' ':!go.sum'
@@ -30,23 +30,26 @@ tar --no-same-owner --no-same-permissions -xzf "$output_dir/frontend.tar.gz" -C 
 test -s build/static/index.html
 test -s build/static/login.html
 test -s build/static/install.html
-go test -json -count=1 -timeout=5m ./... > "$output_dir/go-tests.private.jsonl"
+test_exit=0
+go test -mod=readonly -json -count=1 -timeout=5m ./... > "$output_dir/go-tests.private.jsonl" || test_exit=$?
 node - "$output_dir/go-tests.private.jsonl" "$reports/go-tests.json" <<'NODE'
 const fs=require('node:fs');
 const lines=fs.readFileSync(process.argv[2],'utf8').split('\n').filter(Boolean).map(l=>JSON.parse(l));
 const passes=lines.filter(x=>x.Action==='pass'),fails=lines.filter(x=>x.Action==='fail');
-if(!passes.length||fails.length)throw Error('UPSTREAM_TESTS_INCOMPLETE');
-fs.writeFileSync(process.argv[3],JSON.stringify({status:'PASS',tests:passes.filter(x=>x.Test).length,packages:passes.filter(x=>!x.Test).length,scope:'go test ./... on patched source; upstream test output not published'},null,2)+'\n');
+const status=passes.length&&!fails.length?'PASS':'FAIL';
+fs.writeFileSync(process.argv[3],JSON.stringify({status,tests:passes.filter(x=>x.Test).length,packages:passes.filter(x=>!x.Test).length,failures:fails.map(x=>({package:x.Package,test:x.Test||null})),scope:'go test ./... on patched source; upstream test output not published'},null,2)+'\n');
+if(status!=='PASS')throw Error('UPSTREAM_TESTS_INCOMPLETE');
 NODE
+test "$test_exit" = '0'
 epoch="$(git show -s --format=%ct HEAD)"
 version_pkg='github.com/AdguardTeam/AdGuardHome/internal/version'
 flags="-s -w -X ${version_pkg}.version=v0.107.79-dxos.1 -X ${version_pkg}.channel=candidate -X ${version_pkg}.committime=${epoch}"
-go build -trimpath -buildvcs=false -ldflags "$flags" -o "$output_dir/AdGuardHome" .
-go build -trimpath -buildvcs=false -ldflags "$flags" -o "$output_dir/AdGuardHome-second" .
+go build -mod=readonly -trimpath -buildvcs=false -ldflags "$flags" -o "$output_dir/AdGuardHome" .
+go build -mod=readonly -trimpath -buildvcs=false -ldflags "$flags" -o "$output_dir/AdGuardHome-second" .
 cmp "$output_dir/AdGuardHome" "$output_dir/AdGuardHome-second"
 "$output_dir/AdGuardHome" --version | tee "$reports/version.txt"
 grep -F 'v0.107.79-dxos.1' "$reports/version.txt"
-go list -deps . > "$reports/production-imports.txt"
+go list -mod=readonly -deps . > "$reports/production-imports.txt"
 go tool govulncheck -mode=binary "$output_dir/AdGuardHome" > "$reports/govulncheck.txt"
 curl --fail --location --proto '=https' --tlsv1.2 --silent --show-error \
   'https://github.com/aquasecurity/trivy/releases/download/v0.76.0/trivy_0.76.0_Linux-64bit.tar.gz' -o "$output_dir/trivy.tar.gz"

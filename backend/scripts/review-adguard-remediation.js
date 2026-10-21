@@ -6,6 +6,9 @@ const upstream = '05ba17b282da1c4393d6a4ba4db0cf519194a362';
 const expected = Object.freeze({
   'golang.org/x/crypto': 'v0.57.0', 'golang.org/x/net': 'v0.60.0',
   'golang.org/x/text': 'v0.42.0', 'golang.org/x/sys': 'v0.48.0', 'golang.org/x/term': 'v0.46.0',
+  // Required by x/text v0.42.0 and x/tools v0.49.0; verified against proxy .mod files.
+  'golang.org/x/tools': 'v0.49.0', 'golang.org/x/mod': 'v0.41.0', 'golang.org/x/sync': 'v0.23.0',
+  'golang.org/x/telemetry': 'v0.0.0-20260811182544-a038080d80e5',
 });
 function parseModules(text) {
   return new Map([...text.matchAll(/^\s*([\w.-]+(?:\/[\w.-]+)+)\s+(v[^\s]+)(?:\s|$)/gm)].map(m => [m[1], m[2]]));
