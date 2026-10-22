@@ -2,6 +2,16 @@
 
 Ứng dụng quản lý doanh nghiệp đa tổ chức, giao diện tiếng Việt. Backend kiểm soát xác thực, quyền và phạm vi dữ liệu của từng tổ chức.
 
+## Phần mềm mã nguồn mở — Giấy phép Apache-2.0
+
+**DX-OS là phần mềm mã nguồn mở, được phát hành theo giấy phép Apache License, Version 2.0 (Apache-2.0).** Mã nguồn được công khai để người dùng có thể nghiên cứu, sử dụng, sửa đổi và phân phối theo các điều khoản của giấy phép.
+
+- [LICENSE](LICENSE): toàn văn giấy phép Apache-2.0 áp dụng cho mã nguồn gốc của DX-OS.
+- [NOTICE](NOTICE): thông tin bản quyền và ghi nhận đóng góp.
+- [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) và [licenses/](licenses/): giấy phép, ghi nhận và bằng chứng của các thành phần bên thứ ba. Các thành phần này giữ giấy phép riêng, không được đổi thành Apache-2.0 của DX-OS.
+
+Khi phân phối lại, cần giữ các thông báo bản quyền/giấy phép và ghi rõ thay đổi theo điều khoản tương ứng. Windows, Docker Desktop và dịch vụ AI bên ngoài không thuộc phạm vi cấp phép Apache-2.0 của dự án; DX-OS có thể chạy với Linux, Docker Engine và AI mock mà không cần các dịch vụ AI thương mại.
+
 ## Bản phát hành và demo cho người chấm
 
 [GitHub Releases](https://github.com/nt6175790-afk/DXOS/releases) lưu phiên bản gắn tag, source zip, commit manifest và SHA-256. Dùng tag **v0.2.0** để lấy đúng mã nguồn release; main có thể thay đổi sau này. Xem [quy trình PR/release](docs/architecture/release-process.md).
