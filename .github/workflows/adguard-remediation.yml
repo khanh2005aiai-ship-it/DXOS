@@ -1,0 +1,62 @@
+name: AdGuard dependency remediation candidate
+on:
+  pull_request:
+    paths:
+      - .github/workflows/adguard-remediation.yml
+      - backend/scripts/build-adguard-remediation.sh
+      - backend/scripts/review-adguard-remediation*
+      - backend/scripts/check-adguard-artifact.js
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: adguard-remediation-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  rebuild-and-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      GOTOOLCHAIN: local
+      GOTELEMETRY: "off"
+      DXOS_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.21.1"
+      - name: Verify remediation gate unit tests
+        run: node --test backend/scripts/check-adguard-artifact.test.js backend/scripts/review-adguard-remediation.test.js
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.26.10"
+          cache: false
+      - name: Fetch exact released source without credentials
+        uses: actions/checkout@v4
+        with:
+          repository: AdguardTeam/AdGuardHome
+          ref: 05ba17b282da1c4393d6a4ba4db0cf519194a362
+          path: security-artifacts/adguard-remediation/source
+          persist-credentials: false
+      - name: Rebuild patched source, test, scan and package matching source
+        run: bash backend/scripts/build-adguard-remediation.sh
+      - name: Upload verified candidate together with source and notices
+        uses: actions/upload-artifact@v4
+        with:
+          name: adguard-v0.107.79-dxos.1-linux-amd64-with-source
+          path: security-artifacts/adguard-remediation/output/published/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Diagnostic reports on failure (no source credentials or service logs)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: adguard-remediation-incomplete-reports
+          path: |
+            security-artifacts/adguard-remediation/output/reports/dependency.patch
+            security-artifacts/adguard-remediation/output/reports/go-tests.json
+            security-artifacts/adguard-remediation/output/reports/govulncheck.txt
+            security-artifacts/adguard-remediation/output/reports/review.json
+          if-no-files-found: ignore
