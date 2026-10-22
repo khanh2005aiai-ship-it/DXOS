@@ -54,6 +54,7 @@ mysqlDescribe('demo dataset with real MySQL constraints', () => {
     await db.auditEvent.deleteMany({ where: scope }); await db.notification.deleteMany({ where: scope });
     await db.aiRequest.deleteMany({ where: scope });
     await db.fileObject.deleteMany({ where: scope }); await db.task.deleteMany({ where: scope });
+    await db.workSchedule.deleteMany({ where: scope }); await db.shift.deleteMany({ where: scope });
     await db.employee.deleteMany({ where: scope }); await db.department.deleteMany({ where: scope });
     await db.membershipRole.deleteMany({ where: scope });
     await db.rolePermission.deleteMany({ where: { role: scope } }); await db.role.deleteMany({ where: scope });
@@ -68,12 +69,17 @@ mysqlDescribe('demo dataset with real MySQL constraints', () => {
     const grantsBefore = await db.rolePermission.findMany({ where: { roleId: role }, orderBy: { id: 'asc' } });
     const permissionsBefore = await db.permission.findMany({ orderBy: { id: 'asc' } });
     const first = await run();
-    expect(first.created).toEqual({ users: 4, memberships: 4, departments: 5, employees: 5, tasks: 8, notifications: 8, documents: 3, aiRequests: 1 });
+    expect(first.created).toEqual({ users: 4, memberships: 4, departments: 5, employees: 5, tasks: 8, notifications: 8, documents: 3, aiRequests: 1, shifts: 1, schedules: 35 });
+    expect(await db.workSchedule.count({ where: { organizationId: org } })).toBe(35);
+    expect(await db.workSchedule.count({ where: { organizationId: foreignOrg } })).toBe(0);
+    expect(await db.attendanceLocation.count({ where: { organizationId: org } })).toBe(0);
+    const schedulesBefore = await db.workSchedule.findMany({ where: { organizationId: org }, orderBy: { id: 'asc' } });
     const before = await db.task.findMany({ where: { organizationId: org }, orderBy: { id: 'asc' } });
     const auditsBefore = await db.auditEvent.count({ where: { organizationId: org } });
     const second = await run();
     expect(Object.values(second.created).every(n => n === 0)).toBe(true);
     expect(await db.task.findMany({ where: { organizationId: org }, orderBy: { id: 'asc' } })).toEqual(before);
+    expect(await db.workSchedule.findMany({ where: { organizationId: org }, orderBy: { id: 'asc' } })).toEqual(schedulesBefore);
     expect(await db.auditEvent.count({ where: { organizationId: org } })).toBe(auditsBefore);
     expect(await db.rolePermission.findMany({ where: { roleId: role }, orderBy: { id: 'asc' } })).toEqual(grantsBefore);
     expect(await db.permission.findMany({ orderBy: { id: 'asc' } })).toEqual(permissionsBefore);
@@ -90,6 +96,10 @@ mysqlDescribe('demo dataset with real MySQL constraints', () => {
   });
   it('retains operator edits, read states and changed member credentials on reseed', async () => {
     await run();
+    const schedule = await db.workSchedule.findFirstOrThrow({ where: { organizationId: org } });
+    await db.workSchedule.update({ where: { id: schedule.id }, data: { isOff: true, shiftId: null, notes: 'Operator leave' } });
+    const shift = await db.shift.findFirstOrThrow({ where: { organizationId: org } });
+    await db.shift.update({ where: { id: shift.id }, data: { name: 'Operator shift', startTime: '08:00' } });
     const id = demoId(org, 'task', 'DEMO-TASK-001');
     await db.task.update({ where: { id }, data: { title: 'Operator edit', status: 'IN_PROGRESS' } });
     const notice = demoId(org, 'notification', 'DEMO-TASK-006');
@@ -97,6 +107,8 @@ mysqlDescribe('demo dataset with real MySQL constraints', () => {
     const newHash = await new PasswordService().hash(randomBytes(24).toString('base64url'));
     await db.user.update({ where: { email: 'an.demo@dxos.local' }, data: { passwordHash: newHash } });
     await run();
+    expect(await db.workSchedule.findUnique({ where: { id: schedule.id } })).toMatchObject({ isOff: true, shiftId: null, notes: 'Operator leave' });
+    expect(await db.shift.findUnique({ where: { id: shift.id } })).toMatchObject({ name: 'Operator shift', startTime: '08:00' });
     expect(await db.task.findUnique({ where: { id } })).toMatchObject({ title: 'Operator edit', status: 'IN_PROGRESS' });
     expect((await db.notification.findUniqueOrThrow({ where: { id: notice } })).readAt).toEqual(readAt);
     expect((await db.user.findUniqueOrThrow({ where: { email: 'an.demo@dxos.local' } })).passwordHash === newHash).toBe(true);

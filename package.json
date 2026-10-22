@@ -1,6 +1,6 @@
 {
   "name": "dx-os",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "DX-OS — Digital Enterprise Operating System",
   "packageManager": "npm@10.9.4",
@@ -35,7 +35,8 @@
     "db:migration:validate": "npm --workspace @dx-os/backend run db:migration:validate",
     "check": "npm run lint:backend && npm run test:backend && npm run build:backend",
     "test": "npm run test:backend",
-    "build": "npm run build:backend"
+    "build": "npm run build:backend",
+    "demo:refresh": "docker compose --env-file .secrets/demo/compose.env -f backend/deploy/compose.demo.yml run --rm bootstrap node node_modules/tsx/dist/cli.mjs --tsconfig backend/tsconfig.json backend/scripts/demo-container-seed.ts"
   },
   "license": "Apache-2.0"
 }

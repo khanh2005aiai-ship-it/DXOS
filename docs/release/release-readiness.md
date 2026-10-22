@@ -1,3 +1,5 @@
+> Đây là báo cáo lịch sử, không phải nghiệm thu bản hiện tại. Xem [bản phát hành v0.2.0](v0.2.0.md) và validation JSON đính kèm GitHub Release để biết kết quả mới nhất.
+
 # DXOS V1 Release Readiness
 
 Audit: `DXOS-RELEASE-001`

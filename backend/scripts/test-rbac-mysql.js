@@ -49,6 +49,7 @@ async function main() {
     const cli = require.resolve('prisma/build/index.js');
     const schema = resolve(root, 'database/schema.prisma');
     run(cli, ['migrate', 'deploy', '--schema', schema]);
+    run(cli, ['migrate', 'status', '--schema', schema]);
     run(cli, ['migrate', 'diff', '--from-schema-datasource', schema,
       '--to-schema-datamodel', schema, '--exit-code']);
     run(require.resolve('jest/bin/jest'), ['--config', 'jest.config.cjs', '--runInBand', ...process.argv.slice(2)]);

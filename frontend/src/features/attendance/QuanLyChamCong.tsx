@@ -16,7 +16,8 @@ import {
   ChevronLeft,
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { vi } from 'date-fns/locale';
+import { AttendanceClock } from './AttendanceClock';
+import { useAttendanceLocation } from './useAttendanceLocation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrganization } from '@/contexts/OrganizationContext';
 import { usePermission } from '@/hooks/usePermission';
@@ -82,6 +83,7 @@ export function AttendancePage() {
   const [employeeList, setEmployeeList] = useState<Employee[]>([]);
 
   const orgId = currentOrg?.id;
+  const location = useAttendanceLocation(orgId, canRead, canManage);
 
   // Load employee list for managers
   useEffect(() => {
@@ -163,7 +165,8 @@ export function AttendancePage() {
     if (!orgId || isActionSubmitting) return;
     setIsActionSubmitting(true);
     try {
-      await checkIn(orgId, noteInput || undefined);
+      const position = await location.requestPosition();
+      await checkIn(orgId, noteInput || undefined, position);
       showToast('Điểm danh Check-in thành công!', 'success');
       setNoteInput('');
       await Promise.all([loadTodayData(), loadSummaryData(), loadHistoryData()]);
@@ -181,7 +184,8 @@ export function AttendancePage() {
     if (!orgId || isActionSubmitting) return;
     setIsActionSubmitting(true);
     try {
-      await checkOut(orgId, noteInput || undefined);
+      const position = await location.requestPosition();
+      await checkOut(orgId, noteInput || undefined, position);
       showToast('Điểm danh Check-out thành công!', 'success');
       setNoteInput('');
       await Promise.all([loadTodayData(), loadSummaryData(), loadHistoryData()]);
@@ -288,40 +292,7 @@ export function AttendancePage() {
 
       {/* TOP SECTION: REAL-TIME DIGITAL CLOCK & MY ATTENDANCE */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Clock & Real-time Info Card */}
-        <div className="bg-gradient-to-br from-brand-900 to-slate-900 text-white rounded-2xl p-6 shadow-md flex flex-col justify-between relative overflow-hidden">
-          <div className="absolute right-0 top-0 translate-x-8 -translate-y-8 w-48 h-48 bg-brand-500/10 rounded-full blur-3xl" />
-          <div>
-            <div className="flex items-center gap-2 text-brand-300 text-sm font-medium mb-2">
-              <Clock className="h-4 w-4" />
-              <span>Giờ Việt Nam (UTC+07:00)</span>
-            </div>
-            <div className="text-4xl font-extrabold tracking-tight font-mono text-white mb-1">
-              {format(currentTime, 'HH:mm:ss')}
-            </div>
-            <div className="text-slate-300 text-sm capitalize">
-              {format(currentTime, 'EEEE, dd/MM/yyyy', { locale: vi })}
-            </div>
-          </div>
-
-          <div className="mt-6 pt-4 border-t border-slate-700/60 text-xs text-slate-300">
-            {todayData?.todayShift ? (
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="text-slate-400">Ca:</span> {todayData.todayShift.name} ({todayData.todayShift.startTime} - {todayData.todayShift.endTime})
-                </div>
-                <div>
-                  <span className="text-slate-400">Nghỉ trưa:</span>{' '}
-                  {todayData.todayShift.breakStart ? `${todayData.todayShift.breakStart} - ${todayData.todayShift.breakEnd}` : 'Không'}
-                </div>
-              </div>
-            ) : todayData?.isOff ? (
-              <div className="text-amber-300 font-medium">Hôm nay là ngày nghỉ theo lịch phân ca.</div>
-            ) : (
-              <div className="text-slate-400">Chưa được phân ca hôm nay.</div>
-            )}
-          </div>
-        </div>
+        <AttendanceClock now={currentTime} shift={todayData?.todayShift} isOff={todayData?.isOff} />
 
         {/* My Attendance Interactive Action Card */}
         <div className="lg:col-span-2 bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
@@ -410,6 +381,8 @@ export function AttendancePage() {
               </div>
             )}
 
+            {location.panel}
+
             {/* Details Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
               <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
@@ -470,9 +443,9 @@ export function AttendancePage() {
           <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
             <button
               onClick={handleCheckIn}
-              disabled={isActionSubmitting || isCheckedIn || isOnLeave || todayData?.isOff || (!todayData?.todayShift && !todayRecord) || !canCheckIn}
+              disabled={!location.ready || location.busy || isActionSubmitting || isCheckedIn || isOnLeave || todayData?.isOff || (!todayData?.todayShift && !todayRecord) || !canCheckIn}
               className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-semibold transition-all shadow-sm ${
-                isCheckedIn || isOnLeave || todayData?.isOff || (!todayData?.todayShift && !todayRecord) || !canCheckIn
+                !location.ready || location.busy || isCheckedIn || isOnLeave || todayData?.isOff || (!todayData?.todayShift && !todayRecord) || !canCheckIn
                   ? 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
                   : 'bg-brand-600 hover:bg-brand-700 text-white shadow-brand-500/20 active:scale-[0.99]'
               }`}
@@ -483,9 +456,9 @@ export function AttendancePage() {
 
             <button
               onClick={handleCheckOut}
-              disabled={isActionSubmitting || !isCheckedIn || isCheckedOut || !canCheckOut}
+              disabled={!location.ready || location.busy || isActionSubmitting || !isCheckedIn || isCheckedOut || !canCheckOut}
               className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-semibold transition-all shadow-sm ${
-                !isCheckedIn || isCheckedOut || !canCheckOut
+                !location.ready || location.busy || !isCheckedIn || isCheckedOut || !canCheckOut
                   ? 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
                   : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-500/20 active:scale-[0.99]'
               }`}

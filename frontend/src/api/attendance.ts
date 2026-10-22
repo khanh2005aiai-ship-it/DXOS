@@ -95,13 +95,35 @@ export async function getTodayAttendance(organizationId: string): Promise<TodayA
   return res.data;
 }
 
-export async function checkIn(organizationId: string, note?: string): Promise<AttendanceRecord> {
-  const res = await api.post<AttendanceRecord>(`${base(organizationId)}/check-in`, { note });
+export interface AttendancePosition {
+  latitude: number;
+  longitude: number;
+  accuracyMeters: number;
+  capturedAt: string;
+}
+
+export interface AttendanceLocationPolicy {
+  office: { label: string; latitude: number; longitude: number; updatedAt: string } | null;
+  radiusMeters: number;
+  maxAccuracyMeters: number;
+  maxAgeSeconds: number;
+}
+
+export async function getAttendanceLocation(organizationId: string): Promise<AttendanceLocationPolicy> {
+  return (await api.get<AttendanceLocationPolicy>(`${base(organizationId)}/location`)).data;
+}
+
+export async function setAttendanceLocation(organizationId: string, office: { label: string; latitude: number; longitude: number }): Promise<AttendanceLocationPolicy> {
+  return (await api.put<AttendanceLocationPolicy>(`${base(organizationId)}/location`, office)).data;
+}
+
+export async function checkIn(organizationId: string, note: string | undefined, location: AttendancePosition): Promise<AttendanceRecord> {
+  const res = await api.post<AttendanceRecord>(`${base(organizationId)}/check-in`, { note, location });
   return res.data;
 }
 
-export async function checkOut(organizationId: string, note?: string): Promise<AttendanceRecord> {
-  const res = await api.post<AttendanceRecord>(`${base(organizationId)}/check-out`, { note });
+export async function checkOut(organizationId: string, note: string | undefined, location: AttendancePosition): Promise<AttendanceRecord> {
+  const res = await api.post<AttendanceRecord>(`${base(organizationId)}/check-out`, { note, location });
   return res.data;
 }
 

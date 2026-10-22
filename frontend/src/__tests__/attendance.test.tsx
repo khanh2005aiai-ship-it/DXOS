@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { AttendancePage } from '@/features/attendance/AttendancePage';
 import * as attendanceApi from '@/api/attendance';
@@ -101,7 +101,10 @@ const mockHistoryRecord: attendanceApi.AttendanceRecord = {
 
 describe('AttendancePage Component & User Flows', () => {
   beforeEach(() => {
+    state.orgId = 'org-1';
     vi.clearAllMocks();
+    Object.defineProperty(navigator, 'geolocation', {configurable:true,value:{getCurrentPosition:vi.fn((success) => success({coords:{latitude:21,longitude:105.8,accuracy:5},timestamp:Date.now()}))}});
+    vi.mocked(attendanceApi.getAttendanceLocation).mockResolvedValue({office:{label:'Văn phòng',latitude:21,longitude:105.8,updatedAt:''},radiusMeters:100,maxAccuracyMeters:50,maxAgeSeconds:60});
     state.permissions = new Set(['attendance:read', 'attendance:check-in', 'attendance:check-out']);
 
     vi.mocked(attendanceApi.getTodayAttendance).mockResolvedValue({ ...mockTodayData });
@@ -155,12 +158,12 @@ describe('AttendancePage Component & User Flows', () => {
     );
 
     const checkInBtn = await screen.findByRole('button', { name: /CHECK IN/i });
-    expect(checkInBtn).not.toBeDisabled();
+    await waitFor(() => expect(checkInBtn).not.toBeDisabled());
 
     fireEvent.click(checkInBtn);
 
     await waitFor(() => {
-      expect(attendanceApi.checkIn).toHaveBeenCalledWith('org-1', undefined);
+      expect(attendanceApi.checkIn).toHaveBeenCalledWith('org-1', undefined, expect.objectContaining({latitude:21,longitude:105.8,accuracyMeters:5,capturedAt:expect.any(String)}));
       expect(mockShowToast).toHaveBeenCalledWith('Điểm danh Check-in thành công!', 'success');
     });
   });
@@ -187,12 +190,12 @@ describe('AttendancePage Component & User Flows', () => {
     );
 
     const checkOutBtn = await screen.findByRole('button', { name: /CHECK OUT/i });
-    expect(checkOutBtn).not.toBeDisabled();
+    await waitFor(() => expect(checkOutBtn).not.toBeDisabled());
 
     fireEvent.click(checkOutBtn);
 
     await waitFor(() => {
-      expect(attendanceApi.checkOut).toHaveBeenCalledWith('org-1', undefined);
+      expect(attendanceApi.checkOut).toHaveBeenCalledWith('org-1', undefined, expect.objectContaining({latitude:21,longitude:105.8,accuracyMeters:5,capturedAt:expect.any(String)}));
       expect(mockShowToast).toHaveBeenCalledWith('Điểm danh Check-out thành công!', 'success');
     });
   });
@@ -322,4 +325,76 @@ describe('AttendancePage Component & User Flows', () => {
     const checkInBtn = screen.getByRole('button', { name: /CHECK IN/i });
     expect(checkInBtn).toBeDisabled();
   });
+  it('11. denies check-in without browser location permission and never posts attendance', async () => {
+    vi.mocked(navigator.geolocation.getCurrentPosition).mockImplementation((_success,error)=>error?.({code:1} as GeolocationPositionError));
+    render(<MemoryRouter><AttendancePage /></MemoryRouter>);
+    const button=await screen.findByRole('button',{name:/CHECK IN/i});
+    await waitFor(()=>expect(button).not.toBeDisabled());fireEvent.click(button);
+    await waitFor(()=>expect(mockShowToast).toHaveBeenCalledWith(expect.stringContaining('chưa cho phép'),'error'));
+    expect(attendanceApi.checkIn).not.toHaveBeenCalled();
+  });
+  it('12. rejects a distant device and displays its distance without posting', async () => {
+    vi.mocked(navigator.geolocation.getCurrentPosition).mockImplementation(success=>success({coords:{latitude:22,longitude:105.8,accuracy:5},timestamp:Date.now()} as GeolocationPosition));
+    render(<MemoryRouter><AttendancePage /></MemoryRouter>);
+    fireEvent.click(await screen.findByRole('button',{name:'Cập nhật vị trí của tôi'}));
+    expect(await screen.findByText(/ngoài vùng chấm công 100 m/)).toBeInTheDocument();
+    expect(screen.getByText(/Khoảng cách:/)).toBeInTheDocument();
+    expect(attendanceApi.checkIn).not.toHaveBeenCalled();
+  });
+  it('13. blocks attendance until office is configured and does not expose settings to employees', async () => {
+    vi.mocked(attendanceApi.getAttendanceLocation).mockResolvedValue({office:null,radiusMeters:100,maxAccuracyMeters:50,maxAgeSeconds:60});
+    render(<MemoryRouter><AttendancePage /></MemoryRouter>);
+    expect(await screen.findByText(/Công ty chưa thiết lập vị trí/)).toBeInTheDocument();
+    expect(screen.getByRole('button',{name:/CHECK IN/i})).toBeDisabled();
+    expect(screen.queryByText('Thiết lập vị trí công ty')).not.toBeInTheDocument();
+  });
+
+  it('14. reports GPS timeout and does not post attendance', async () => {
+    vi.mocked(navigator.geolocation.getCurrentPosition).mockImplementation((_success,error)=>error?.({code:3} as GeolocationPositionError));
+    render(<MemoryRouter><AttendancePage /></MemoryRouter>);
+    const button=await screen.findByRole('button',{name:/CHECK IN/i});
+    await waitFor(()=>expect(button).not.toBeDisabled()); fireEvent.click(button);
+    await waitFor(()=>expect(mockShowToast).toHaveBeenCalledWith(expect.stringContaining('quá thời gian'),'error'));
+    expect(attendanceApi.checkIn).not.toHaveBeenCalled();
+  });
+
+  it('15. managers save the selected Google Maps pin without manual coordinates or client radius', async () => {
+    state.permissions.add('attendance:manage');
+    vi.mocked(attendanceApi.setAttendanceLocation).mockResolvedValue({office:{label:'Trụ sở',latitude:21,longitude:105.8,updatedAt:''},radiusMeters:100,maxAccuracyMeters:50,maxAgeSeconds:60});
+    render(<MemoryRouter><AttendancePage /></MemoryRouter>);
+    await screen.findByText('Văn phòng');
+    fireEvent.click(screen.getByRole('button',{name:'Thiết lập vị trí công ty'}));
+    fireEvent.change(screen.getByLabelText('Địa chỉ công ty'),{target:{value:'Trụ sở'}});
+    expect(screen.getByRole('button',{name:'Lưu vị trí công ty'})).toBeDisabled();
+    fireEvent.change(screen.getByLabelText('Link địa điểm Google Maps'),{target:{value:'https://www.google.com/maps/place/Office/data=!3d21!4d105.8'}});
+    fireEvent.click(screen.getByRole('button',{name:'Lưu vị trí công ty'}));
+    await waitFor(()=>expect(attendanceApi.setAttendanceLocation).toHaveBeenCalledWith('org-1',{label:'Trụ sở',latitude:21,longitude:105.8}));
+    expect(await screen.findByText('Trụ sở')).toBeInTheDocument();
+  });
+
+  it('16. ignores a delayed GPS result after organization switching', async () => {
+    let complete: PositionCallback | undefined;
+    vi.mocked(navigator.geolocation.getCurrentPosition).mockImplementation(success=>{complete=success;});
+    const view=render(<MemoryRouter><AttendancePage /></MemoryRouter>);
+    const button=await screen.findByRole('button',{name:/CHECK IN/i});
+    await waitFor(()=>expect(button).not.toBeDisabled()); fireEvent.click(button);
+    state.orgId='org-2'; view.rerender(<MemoryRouter><AttendancePage /></MemoryRouter>);
+    await act(async()=>{complete?.({coords:{latitude:21,longitude:105.8,accuracy:5},timestamp:Date.now()} as GeolocationPosition);});
+    expect(attendanceApi.checkIn).not.toHaveBeenCalled();
+    expect(screen.queryByText(/Vị trí của bạn:/)).not.toBeInTheDocument();
+  });
+
+  it('17. blocks an ambiguous viewport URL and shows how to choose a real pin', async () => {
+    state.permissions.add('attendance:manage');
+    render(<MemoryRouter><AttendancePage /></MemoryRouter>);
+    await screen.findByText('Văn phòng');
+    fireEvent.click(screen.getByRole('button',{name:'Thiết lập vị trí công ty'}));
+    fireEvent.change(screen.getByLabelText('Link địa điểm Google Maps'),{target:{value:'https://www.google.com/maps/@21,105.8,17z'}});
+    expect(screen.getByRole('button',{name:'Lưu vị trí công ty'})).toBeDisabled();
+    expect(screen.getByText(/Link chưa xác định ghim công ty/)).toBeInTheDocument();
+    expect(screen.queryByLabelText('Vĩ độ công ty')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Kinh độ công ty')).not.toBeInTheDocument();
+    expect(attendanceApi.setAttendanceLocation).not.toHaveBeenCalled();
+  });
+
 });

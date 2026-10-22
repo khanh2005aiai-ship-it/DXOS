@@ -11,6 +11,7 @@ import { PERMISSIONS } from '../rbac/permission-catalog';
 import { AuditService } from '../audit/audit.service';
 import { AUDIT_EVENTS } from '../audit/audit-catalog';
 import type { AttendanceSummaryDto, CheckInDto, CheckOutDto, ListAttendanceDto } from './attendance.dto';
+import { AttendanceLocationService } from './attendance-location.service';
 
 export const attendanceProjection = {
   id: true,
@@ -185,6 +186,7 @@ export class AttendanceService {
     private readonly prisma: PrismaService,
     private readonly authz: AuthorizationService,
     private readonly audit: AuditService,
+    private readonly location: AttendanceLocationService,
   ) {}
 
   private async resolveActiveEmployee(tx: Prisma.TransactionClient, organizationId: string, userId: string) {
@@ -216,6 +218,8 @@ export class AttendanceService {
     return this.prisma.$transaction(
       async (tx) => {
         const employee = await this.resolveActiveEmployee(tx, organizationId, actorUserId);
+
+        await this.location.assertInside(tx, organizationId, actorUserId, PERMISSIONS.ATTENDANCE_CHECK_IN, dto.location, now);
 
         // 1. Check Leave Management integration:
         // If employee has an APPROVED leave covering today, check-in is rejected
@@ -373,6 +377,8 @@ export class AttendanceService {
     return this.prisma.$transaction(
       async (tx) => {
         const employee = await this.resolveActiveEmployee(tx, organizationId, actorUserId);
+
+        await this.location.assertInside(tx, organizationId, actorUserId, PERMISSIONS.ATTENDANCE_CHECK_OUT, dto.location, now);
 
         // Find active open attendance record (first check today, then yesterday if open overnight)
         let existing = await tx.attendanceRecord.findUnique({

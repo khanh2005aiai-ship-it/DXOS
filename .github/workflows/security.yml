@@ -114,7 +114,10 @@ jobs:
         run: |
           docker compose -p dxos-ci-demo --env-file .secrets/demo/compose.env -f backend/deploy/compose.demo.yml build
           docker compose -p dxos-ci-demo --env-file .secrets/demo/compose.env -f backend/deploy/compose.demo.yml up -d --wait --wait-timeout 240
-      - name: Verify migration, seed, login, files and tenant isolation
+      - name: Refresh demo dates without resetting credentials or grants
+        working-directory: ${{ runner.temp }}/dxos-release-source
+        run: docker compose -p dxos-ci-demo --env-file .secrets/demo/compose.env -f backend/deploy/compose.demo.yml run --rm bootstrap node node_modules/tsx/dist/cli.mjs --tsconfig backend/tsconfig.json backend/scripts/demo-container-seed.ts
+      - name: Verify migration, seed, login, attendance and tenant isolation
         working-directory: ${{ runner.temp }}/dxos-release-source
         run: node backend/scripts/test-demo-live.js
       - name: Audit the isolated demo database image

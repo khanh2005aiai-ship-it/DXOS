@@ -69,6 +69,7 @@ model AuthSession {
 }
 
 model Organization {
+  attendanceLocation AttendanceLocation?
   id          String                   @id @default(uuid()) @db.Char(36)
   slug        String                   @unique @db.VarChar(63)
   name        String                   @db.VarChar(200)
@@ -102,6 +103,18 @@ model Organization {
   workflowStepExecutions  WorkflowStepExecution[]
 
   @@map("organizations")
+}
+
+model AttendanceLocation {
+  organizationId String @id @map("organization_id") @db.Char(36)
+  label String @db.VarChar(120)
+  latitude Float @db.Double
+  longitude Float @db.Double
+  createdAt DateTime @default(now()) @map("created_at") @db.DateTime(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.DateTime(6)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@map("attendance_locations")
 }
 
 enum OrganizationStatus {

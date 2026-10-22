@@ -17,19 +17,24 @@ export class DemoSeedError extends Error {
   constructor(readonly code: string) { super(code); this.name = 'DemoSeedError'; }
 }
 
-export function demoConfiguration(source: NodeJS.ProcessEnv) {
+export function localDemoDatabase(source: NodeJS.ProcessEnv) {
   if (!['development', 'test'].includes(source.NODE_ENV ?? 'development')) throw new DemoSeedError('LOCAL_DEMO_ONLY');
   let url: URL;
   try { url = new URL(source.DATABASE_URL ?? ''); } catch { throw new DemoSeedError('LOCAL_MYSQL_REQUIRED'); }
   const testDatabase = source.NODE_ENV === 'test' && /^\/dx_os_rbac_test_[a-f0-9]{16}$/.test(url.pathname);
   if (url.protocol !== 'mysql:' || !['localhost', '127.0.0.1', '[::1]'].includes(url.hostname) ||
     (url.pathname !== '/dx_os' && !testDatabase)) throw new DemoSeedError('LOCAL_DEMO_DATABASE_REQUIRED');
+  return url.toString();
+}
+
+export function demoConfiguration(source: NodeJS.ProcessEnv) {
+  const databaseUrl = localDemoDatabase(source);
   const password = source.DEMO_ADMIN_PASSWORD;
   if (!password || password.length < 16 || password.length > 1024) throw new DemoSeedError('DEMO_ADMIN_PASSWORD_REQUIRED_16_TO_1024_CHARS');
   if (source.DEMO_ADMIN_EMAIL && source.DEMO_ADMIN_EMAIL.trim().toLowerCase() !== DEMO_ADMIN_EMAIL) {
     throw new DemoSeedError('EXPECTED_EXISTING_DEMO_ADMIN');
   }
-  return { databaseUrl: url.toString(), password };
+  return { databaseUrl, password };
 }
 
 // Explicit local provisioning only. It never creates/grants roles or changes the permission catalog.
@@ -42,7 +47,7 @@ export async function seedDemoDataset(source: NodeJS.ProcessEnv, storageOverride
   const audit = new AuditService(db as PrismaService);
   const passwords = new PasswordService();
   const requireState = (condition: unknown, code: string): void => { if (!condition) throw new DemoSeedError(code); };
-  const created = { users: 0, memberships: 0, departments: 0, employees: 0, tasks: 0, notifications: 0, documents: 0, aiRequests: 0 };
+  const created = { users: 0, memberships: 0, departments: 0, employees: 0, tasks: 0, notifications: 0, documents: 0, aiRequests: 0, shifts: 0, schedules: 0 };
   try {
     const actor = await db.user.findUnique({ where: { email: DEMO_ADMIN_EMAIL } });
     requireState(actor?.passwordHash && await passwords.verify(password, actor.passwordHash), 'RUN_SEED_DEMO_ADMIN_FIRST_OR_CHECK_PASSWORD');
@@ -57,7 +62,7 @@ export async function seedDemoDataset(source: NodeJS.ProcessEnv, storageOverride
       requireState(role?.isActive && await tx.membershipRole.findFirst({ where: {
         roleId: role.id, organizationId: org, membership: { userId: admin, status: 'ACTIVE' },
       } }), 'EXISTING_ACTIVE_ADMIN_ROLE_REQUIRED');
-      for (const permission of ['department:create', 'employee:create', 'task:create', 'task:assign', 'file:upload'] as const) {
+      for (const permission of ['department:create', 'employee:create', 'task:create', 'task:assign', 'file:upload', 'shift:create', 'schedule:create'] as const) {
         requireState(await auth.can(admin, permission, org, tx), 'EXISTING_ADMIN_PERMISSIONS_REQUIRED');
       }
 
@@ -103,6 +108,36 @@ export async function seedDemoDataset(source: NodeJS.ProcessEnv, storageOverride
         }
         requireState(employee.status === 'ACTIVE', 'DEMO_EMPLOYEE_INACTIVE_PRESERVED');
         people.set(item.key, { userId: user.id, employeeId: employee.id, departmentId: employee.departmentId });
+      }
+
+      // Rolling seven-day demo schedule in Vietnam time. Preserve every operator edit.
+      // No office location or employee attendance/GPS is fabricated by this seed.
+      const shiftCode = 'DEMO-DAY';
+      let shift = await tx.shift.findUnique({ where: { organizationId_code: { organizationId: org, code: shiftCode } } });
+      if (!shift) {
+        shift = await tx.shift.create({ data: { id: demoId(org, 'shift', shiftCode), organizationId: org,
+          code: shiftCode, name: 'Ca hành chính demo', startTime: '09:00', endTime: '18:00',
+          breakStart: '12:00', breakEnd: '13:00', gracePeriodMinutes: 5 } });
+        await audit.record({ event: AUDIT_EVENTS.SHIFT_CREATED, organizationId: org, actorUserId: admin, resourceId: shift.id }, tx);
+        created.shifts++;
+      }
+      requireState(shift.isActive, 'DEMO_SHIFT_INACTIVE_PRESERVED');
+      const vietnamDate = new Date(now.getTime() + 7 * 60 * 60 * 1000).toISOString().slice(0, 10);
+      for (let offset = 0; offset < 7; offset++) {
+        const workDate = new Date(vietnamDate + 'T00:00:00.000Z');
+        workDate.setUTCDate(workDate.getUTCDate() + offset);
+        const isOff = [0, 6].includes(workDate.getUTCDay());
+        for (const person of people.values()) {
+          const existing = await tx.workSchedule.findUnique({ where: { organizationId_employeeId_workDate: {
+            organizationId: org, employeeId: person.employeeId, workDate } } });
+          if (existing) continue;
+          const schedule = await tx.workSchedule.create({ data: {
+            id: demoId(org, 'schedule', person.employeeId + ':' + workDate.toISOString().slice(0, 10)),
+            organizationId: org, employeeId: person.employeeId, workDate,
+            isOff, shiftId: isOff ? null : shift.id, notes: 'Lịch demo; quản lý có thể điều chỉnh.' } });
+          await audit.record({ event: AUDIT_EVENTS.SCHEDULE_CREATED, organizationId: org, actorUserId: admin, resourceId: schedule.id }, tx);
+          created.schedules++;
+        }
       }
 
       for (const item of DEMO_TASKS) {

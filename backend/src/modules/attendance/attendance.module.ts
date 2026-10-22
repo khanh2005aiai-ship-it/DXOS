@@ -4,11 +4,12 @@ import { RbacModule } from '../rbac/rbac.module';
 import { AuditWriterModule } from '../audit/audit-writer.module';
 import { AttendanceController } from './attendance.controller';
 import { AttendanceService } from './attendance.service';
+import { AttendanceLocationService } from './attendance-location.service';
 
 @Module({
   imports: [AuthModule, RbacModule, AuditWriterModule],
   controllers: [AttendanceController],
-  providers: [AttendanceService],
+  providers: [AttendanceService, AttendanceLocationService],
   exports: [AttendanceService],
 })
 export class AttendanceModule {}

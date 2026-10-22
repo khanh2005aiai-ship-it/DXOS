@@ -60,6 +60,21 @@ async function main() {
       ok('Seeded document download', bytes.status, 200); assert((await bytes.arrayBuffer()).byteLength > 0);
     }
   }
+  phase = 'attendance';
+  const policyResponse = await request(prefix + '/attendance/location', { headers });
+  ok('Attendance location policy', policyResponse.status, 200);
+  const policy = await policyResponse.json();
+  ok('Fixed 100 metre attendance radius', policy.radiusMeters, 100);
+  assert(policy.office === null || (typeof policy.office.label === 'string' && Number.isFinite(policy.office.latitude) && Number.isFinite(policy.office.longitude)));
+  checks.push({ name: 'Attendance office configuration has a safe shape', status: 'PASS' });
+  const todayResponse = await request(prefix + '/attendance/today', { headers });
+  ok('Attendance today API', todayResponse.status, 200);
+  const today = await todayResponse.json();
+  assert(today.isEmployee && today.todaySchedule);
+  checks.push({ name: 'Current Vietnam-date demo employee schedule exists', status: 'PASS' });
+  ok('Missing GPS rejected', (await request(prefix + '/attendance/check-in', {
+    method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' }, body: '{}' })).status, 400);
+  ok('Foreign attendance location rejected', (await request('/api/v1/organizations/' + randomUUID() + '/attendance/location', { headers })).status, 403);
   phase = 'tenant isolation';
   ok('Foreign organization rejected', (await request('/api/v1/organizations/' + randomUUID() + '/roles', { headers })).status, 403);
   phase = 'logout'; ok('Logout', (await request('/api/v1/auth/logout', { method: 'POST', headers })).status, 204); token = undefined;
