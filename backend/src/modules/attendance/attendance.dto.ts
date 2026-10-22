@@ -1,6 +1,33 @@
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { IsEnum, IsInt, IsOptional, IsString, IsUUID, Matches, Max, MaxLength, Min } from 'class-validator';
 import { AttendanceStatus } from '@prisma/client';
+import { IsDefined, IsISO8601, IsNumber, ValidateNested } from 'class-validator';
+
+export class AttendancePositionDto {
+  @IsNumber() @Min(-90) @Max(90)
+  latitude!: number;
+
+  @IsNumber() @Min(-180) @Max(180)
+  longitude!: number;
+
+  @IsNumber() @Min(0) @Max(50)
+  accuracyMeters!: number;
+
+  @IsISO8601({ strict: true })
+  @Matches(/T.*(?:Z|[+-]\d{2}:\d{2})$/)
+  capturedAt!: string;
+}
+
+export class AttendanceLocationDto {
+  @IsString() @MaxLength(120) @Matches(/\S/)
+  label!: string;
+
+  @IsNumber() @Min(-90) @Max(90)
+  latitude!: number;
+
+  @IsNumber() @Min(-180) @Max(180)
+  longitude!: number;
+}
 
 export class AttendanceOrgParamDto {
   @IsUUID()
@@ -8,6 +35,8 @@ export class AttendanceOrgParamDto {
 }
 
 export class CheckInDto {
+  @IsDefined() @ValidateNested() @Type(() => AttendancePositionDto)
+  location!: AttendancePositionDto;
   @IsOptional()
   @IsString()
   @MaxLength(500)
@@ -15,6 +44,8 @@ export class CheckInDto {
 }
 
 export class CheckOutDto {
+  @IsDefined() @ValidateNested() @Type(() => AttendancePositionDto)
+  location!: AttendancePositionDto;
   @IsOptional()
   @IsString()
   @MaxLength(500)

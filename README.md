@@ -4,7 +4,7 @@
 
 ## Bản phát hành và demo cho người chấm
 
-[GitHub Releases](https://github.com/nt6175790-afk/DXOS/releases) lưu phiên bản gắn tag, source zip, commit manifest và SHA-256. Dùng tag **v0.1.0** để lấy đúng mã nguồn release; main có thể thay đổi sau này. Xem [quy trình PR/release](docs/architecture/release-process.md).
+[GitHub Releases](https://github.com/nt6175790-afk/DXOS/releases) lưu phiên bản gắn tag, source zip, commit manifest và SHA-256. Dùng tag **v0.2.0** để lấy đúng mã nguồn release; main có thể thay đổi sau này. Xem [quy trình PR/release](docs/architecture/release-process.md).
 
 **Cập nhật bảo mật 21/10/2026:** v0.1.0 chứa follow-redirects 1.16.0 trong frontend lockfile, vừa được scanner báo hai HIGH. Bản vá 1.16.1 được xử lý trong [PR #15](https://github.com/nt6175790-afk/DXOS/pull/15); khi dựng bản mới, chọn revision đã vá và đã qua CI. Tag/asset v0.1.0 giữ nguyên để truy xuất; không coi bản cũ là đã có bản vá. Xem [chi tiết và phạm vi ảnh hưởng](docs/security/follow-redirects-2026-10-21.md).
 
@@ -19,6 +19,8 @@ npm.cmd run demo:test
 
 Mở **http://localhost:8090**, email **admin.demo@dxos.local**, mật khẩu tự sinh trong **.secrets/demo/compose.env** trên chính máy đó. Bộ này có MySQL riêng và dữ liệu giả lập, không dùng database/credential của máy tác giả. Xem [hướng dẫn Docker đầy đủ](docs/architecture/docker-demo-quickstart.md) trước khi chạy. Đây là demo loopback/offline, chưa có website public và chưa phải production.
 
+Chi tiết bản mới, quy trình kiểm chứng và giới hạn: [DX-OS v0.2.0](docs/release/v0.2.0.md).
+
 ## Chức năng
 
 - Tổng quan, phòng ban, nhân sự, công việc/Kanban, lịch và tìm kiếm.
@@ -29,7 +31,7 @@ Mở **http://localhost:8090**, email **admin.demo@dxos.local**, mật khẩu t�
 
 ### Đánh giá AdGuard và phần hạ tầng bổ sung
 
-[Đánh giá tích hợp AdGuard](docs/architecture/adguard-integration-assessment.md) gồm ranh giới DNS/ứng dụng, tenant isolation, giấy phép và quyết định GO/NO-GO. Có [runbook hạ tầng](docs/architecture/adguard-infrastructure-runbook.md), [security review](docs/architecture/adguard-security-review.md), [24 case nghiệm thu dự kiến](docs/architecture/adguard-validation-plan.md) và [bàn giao công việc](docs/team/adguard-work-plan.md). Đây là thiết kế/tài liệu, **chưa có AdGuard runtime hoặc API trong DX-OS**, không thay bộ demo v0.1.0 đã phát hành.
+[Đánh giá tích hợp AdGuard](docs/architecture/adguard-integration-assessment.md) gồm ranh giới DNS/ứng dụng, tenant isolation, giấy phép và quyết định GO/NO-GO. Có [runbook hạ tầng](docs/architecture/adguard-infrastructure-runbook.md), [security review](docs/architecture/adguard-security-review.md), [24 case nghiệm thu dự kiến](docs/architecture/adguard-validation-plan.md) và [bàn giao công việc](docs/team/adguard-work-plan.md). Đây là thiết kế/tài liệu, **chưa có AdGuard runtime hoặc API trong DX-OS**, là phần đánh giá riêng, không được bật trong bộ demo chính.
 
 [Bản vá candidate AdGuard v0.107.79-dxos.1](docs/security/adguard-remediation.md) đã qua rebuild/test/scan riêng với 0 HIGH/CRITICAL, có binary Linux amd64 cùng corresponding source và SBOM. Còn 1 MEDIUM và 1 UNKNOWN được giữ hiển thị, chưa phê duyệt production hoặc kết nối tenant API. Bản chính thức cũ và bản rebuild có hash/provenance khác nhau; không dùng chữ ký upstream cho binary đã sửa.
 

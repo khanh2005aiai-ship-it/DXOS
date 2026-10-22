@@ -17,7 +17,7 @@ Demo cơ bản không cần Docker, OpenAI API key, Keycloak, OpenBao hoặc Cla
 Lệnh bên dưới dùng PowerShell trên Windows. Dùng npm.cmd để tránh lỗi chặn script npm.ps1. Với Linux/macOS, thay npm.cmd bằng npm và Copy-Item bằng cp.
 
 ```powershell
-git clone https://github.com/nt6175790-afk/DXOS.git
+git clone --branch v0.2.0 --depth 1 https://github.com/nt6175790-afk/DXOS.git
 cd DXOS
 node --version
 npm.cmd --version
@@ -130,3 +130,9 @@ Giữ cả hai terminal đang chạy. Dừng bằng Ctrl+C khi test xong. Nhữn
 | Prisma generate báo EPERM khi thay query_engine trên Windows | Dừng backend/test đang dùng Prisma của bản checkout này, rồi chạy lại generate trước khi khởi động backend. Không đổi ACL để khắc phục khóa file. |
 
 Không dùng link localhost của máy tác giả để truy cập từ máy khác. Nếu muốn giảng viên mở một link web mà không cài đặt, cần triển khai một demo server riêng rồi cấp tài khoản demo; repository hiện chưa cung cấp server đó.
+
+## Chấm công và lịch demo v0.2.0
+
+Seed tạo ca 09:00–18:00 và lịch bảy ngày theo giờ Việt Nam, cuối tuần nghỉ; giữ các chỉnh sửa đã có. Chưa tự cấu hình vị trí công ty. Quản lý nhập địa chỉ, mở Google Maps và dán link ghim đầy đủ tại màn hình Chấm công. Bán kính 100 m được kiểm tra ở backend; cần GPS chính xác và quyền trình duyệt. Xem [cách chọn ghim](attendance-google-maps.md) và [giới hạn bản phát hành](../release/v0.2.0.md).
+
+Docker: khi lịch đã cũ, chạy npm.cmd run demo:refresh (MySQL demo phải đang chạy). Native: chạy lại npm.cmd --workspace @dx-os/backend run seed:demo. Chỉ thêm lịch còn thiếu; không reset quyền, mật khẩu, địa điểm hoặc dữ liệu đã chỉnh.

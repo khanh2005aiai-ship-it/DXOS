@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { MembershipStatus, OrganizationStatus, PrismaClient, UserAccountStatus } from '@prisma/client';
+import { localDemoDatabase } from './demo/seed-demo-dataset';
 import { PasswordService } from '../src/modules/auth/password.service';
 import { PERMISSION_CATALOG } from '../src/modules/rbac/permission-catalog';
 
@@ -27,6 +28,8 @@ if (!password || password.length < 16 || password.length > 1_024) {
   throw new Error('DEMO_ADMIN_PASSWORD must be configured with 16-1024 characters.');
 }
 const passwordForHash = password;
+// Refuse privileged demo provisioning against production or a remote database.
+localDemoDatabase(process.env);
 
 async function main(): Promise<void> {
   const prisma = new PrismaClient({ datasources: { db: { url: process.env.DATABASE_URL } } });

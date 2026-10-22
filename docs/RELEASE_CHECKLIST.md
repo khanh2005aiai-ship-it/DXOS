@@ -1,3 +1,5 @@
+> Đây là báo cáo lịch sử, không phải nghiệm thu bản hiện tại. Xem [bản phát hành v0.2.0](release/v0.2.0.md) và validation JSON đính kèm GitHub Release để biết kết quả mới nhất.
+
 # DX-OS Production Release Readiness Checklist (Phase 2)
 
 > Historical verification snapshot from September 2026. Its readiness label and counts do not describe the current security stack. For the current scope, remaining licensing checks and production blockers, see [the local validation dated 15/10/2026](architecture/validation-status.md) and [local setup/validation](architecture/security-devsecops-setup.md).

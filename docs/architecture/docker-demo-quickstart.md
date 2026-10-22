@@ -6,16 +6,16 @@ MySQL demo được build từ backend/deploy/mysql.Dockerfile: server giữ 8.0
 
 ## Lấy đúng mã nguồn phát hành
 
-Tại [Releases](https://github.com/nt6175790-afk/DXOS/releases), chọn **v0.1.0**, tải DXOS-v0.1.0-source.zip và SHA256SUMS.txt. Giải nén, mở terminal trong thư mục có package.json. Hoặc dùng:
+Tại [Releases](https://github.com/nt6175790-afk/DXOS/releases), chọn **v0.2.0**, tải DXOS-v0.2.0-source.zip và SHA256SUMS.txt. Giải nén, mở terminal trong thư mục có package.json. Hoặc dùng:
 
 ```powershell
-git clone --branch v0.1.0 --depth 1 https://github.com/nt6175790-afk/DXOS.git
+git clone --branch v0.2.0 --depth 1 https://github.com/nt6175790-afk/DXOS.git
 cd DXOS
 git describe --tags --exact-match
 git rev-parse HEAD
 ```
 
-So sánh commit với manifest/release notes. Trên PowerShell dùng Get-FileHash DXOS-v0.1.0-source.zip -Algorithm SHA256 rồi so với SHA256SUMS.txt. Source chính thức gắn tag, không dùng main để giả định mã nguồn release cũ. Archive chỉ chứa mã nguồn đã commit, migrations, lockfiles, legal notices, cấu hình build và tài liệu; không chứa node_modules, dữ liệu thật hoặc secret.
+So sánh commit với manifest/release notes. Trên PowerShell dùng Get-FileHash DXOS-v0.2.0-source.zip -Algorithm SHA256 rồi so với SHA256SUMS.txt. Source chính thức gắn tag, không dùng main để giả định mã nguồn release cũ. Archive chỉ chứa mã nguồn đã commit, migrations, lockfiles, legal notices, cấu hình build và tài liệu; không chứa node_modules, dữ liệu thật hoặc secret.
 
 ## Build và chạy
 
@@ -78,3 +78,9 @@ Production cần HTTPS/domain, backup/restore đã diễn tập, identity servic
 | Trang 403 | Kiểm tra tổ chức đang chọn và quyền tài khoản, không bỏ kiểm tra RBAC. |
 
 Các digest base image/lockfile giữ đầu vào chính xác; apk upgrade lấy bản vá tại thời điểm build. Đảm bảo truy xuất đúng source theo tag và kiểm tra build/run, không cam kết binary bit-for-bit hoặc package registry không thay đổi trong tương lai.
+
+## Chấm công và lịch demo v0.2.0
+
+Seed tạo ca 09:00–18:00 và lịch bảy ngày theo giờ Việt Nam, cuối tuần nghỉ; giữ các chỉnh sửa đã có. Chưa tự cấu hình vị trí công ty. Quản lý nhập địa chỉ, mở Google Maps và dán link ghim đầy đủ tại màn hình Chấm công. Bán kính 100 m được kiểm tra ở backend; cần GPS chính xác và quyền trình duyệt. Xem [cách chọn ghim](attendance-google-maps.md) và [giới hạn bản phát hành](../release/v0.2.0.md).
+
+Docker: khi lịch đã cũ, chạy npm.cmd run demo:refresh (MySQL demo phải đang chạy). Native: chạy lại npm.cmd --workspace @dx-os/backend run seed:demo. Chỉ thêm lịch còn thiếu; không reset quyền, mật khẩu, địa điểm hoặc dữ liệu đã chỉnh.

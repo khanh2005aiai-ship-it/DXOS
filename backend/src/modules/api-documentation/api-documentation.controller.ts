@@ -16,6 +16,7 @@ import { dashboardPaths, dashboardSchemas } from '../dashboard/dashboard.openapi
 import { searchPaths, searchSchemas } from '../search/search.openapi';
 import { calendarPaths, calendarSchemas } from '../calendar/calendar.openapi';
 import { ssoPaths } from '../auth/sso.openapi';
+import { attendancePaths, attendanceSchemas } from '../attendance/attendance.openapi';
 
 @Controller('docs')
 export class ApiDocumentationController {
@@ -38,6 +39,7 @@ export class ApiDocumentationController {
       },
       servers: [{ url: '/' + config.apiPrefix, description: 'DX-OS API v1' }],
       paths: {
+        ...attendancePaths,
         ...ssoPaths,
         ...reportPaths,
         ...organizationPaths,
@@ -181,6 +183,7 @@ export class ApiDocumentationController {
         ...dashboardSchemas,
         ...searchSchemas,
         ...calendarSchemas,
+        ...attendanceSchemas,
           ...roleAdministrationSchemas,
           HealthResponse: {
             type: 'object',
